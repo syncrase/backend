@@ -1,0 +1,29 @@
+{
+    "name": "TypeTerre",
+    "fields": [
+        {
+            "fieldName": "typeTerre",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "plante",
+            "otherEntityName": "plante",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "typeTerre"
+        }
+    ],
+    "changelogDate": "20190110200921",
+    "javadoc": "TypeTerre enumeration.\n@author Pierre TAQUET",
+    "entityTableName": "type_terre",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "backend",
+    "applications": "*",
+    "microserviceName": "backend"
+}
