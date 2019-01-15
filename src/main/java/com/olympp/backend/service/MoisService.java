@@ -24,18 +24,6 @@ public interface MoisService {
      * @return the list of entities
      */
     List<Mois> findAll();
-    /**
-     * Get all the MoisDTO where Recolte is null.
-     *
-     * @return the list of entities
-     */
-    List<Mois> findAllWhereRecolteIsNull();
-    /**
-     * Get all the MoisDTO where Floraison is null.
-     *
-     * @return the list of entities
-     */
-    List<Mois> findAllWhereFloraisonIsNull();
 
 
     /**

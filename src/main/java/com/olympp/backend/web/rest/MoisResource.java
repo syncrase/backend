@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing Mois.
@@ -80,20 +79,11 @@ public class MoisResource {
     /**
      * GET  /mois : get all the mois.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of mois in body
      */
     @GetMapping("/mois")
     @Timed
-    public List<Mois> getAllMois(@RequestParam(required = false) String filter) {
-        if ("recolte-is-null".equals(filter)) {
-            log.debug("REST request to get all Moiss where recolte is null");
-            return moisService.findAllWhereRecolteIsNull();
-        }
-        if ("floraison-is-null".equals(filter)) {
-            log.debug("REST request to get all Moiss where floraison is null");
-            return moisService.findAllWhereFloraisonIsNull();
-        }
+    public List<Mois> getAllMois() {
         log.debug("REST request to get all Mois");
         return moisService.findAll();
     }

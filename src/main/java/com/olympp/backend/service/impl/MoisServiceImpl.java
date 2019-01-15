@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Mois.
@@ -53,34 +51,6 @@ public class MoisServiceImpl implements MoisService {
         return moisRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the mois where Recolte is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Mois> findAllWhereRecolteIsNull() {
-        log.debug("Request to get all mois where Recolte is null");
-        return StreamSupport
-            .stream(moisRepository.findAll().spliterator(), false)
-            .filter(mois -> mois.getRecolte() == null)
-            .collect(Collectors.toList());
-    }
-
-
-    /**
-     *  get all the mois where Floraison is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Mois> findAllWhereFloraisonIsNull() {
-        log.debug("Request to get all mois where Floraison is null");
-        return StreamSupport
-            .stream(moisRepository.findAll().spliterator(), false)
-            .filter(mois -> mois.getFloraison() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one mois by id.

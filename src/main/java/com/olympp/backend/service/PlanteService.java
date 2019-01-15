@@ -24,18 +24,6 @@ public interface PlanteService {
      * @return the list of entities
      */
     List<Plante> findAll();
-    /**
-     * Get all the PlanteDTO where Recolte is null.
-     *
-     * @return the list of entities
-     */
-    List<Plante> findAllWhereRecolteIsNull();
-    /**
-     * Get all the PlanteDTO where Floraison is null.
-     *
-     * @return the list of entities
-     */
-    List<Plante> findAllWhereFloraisonIsNull();
 
 
     /**

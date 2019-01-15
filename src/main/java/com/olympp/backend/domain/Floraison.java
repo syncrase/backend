@@ -1,5 +1,6 @@
 package com.olympp.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,17 +23,15 @@ public class Floraison implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @ManyToOne
+    @JsonIgnoreProperties("floraisons")
     private Plante plante;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @ManyToOne
+    @JsonIgnoreProperties("floraisons")
     private Mois mois;
 
-    public Floraison() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

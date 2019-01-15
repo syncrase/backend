@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing Plante.
@@ -81,20 +80,11 @@ public class PlanteResource {
     /**
      * GET  /plantes : get all the plantes.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of plantes in body
      */
     @GetMapping("/plantes")
     @Timed
-    public List<Plante> getAllPlantes(@RequestParam(required = false) String filter) {
-        if ("recolte-is-null".equals(filter)) {
-            log.debug("REST request to get all Plantes where recolte is null");
-            return planteService.findAllWhereRecolteIsNull();
-        }
-        if ("floraison-is-null".equals(filter)) {
-            log.debug("REST request to get all Plantes where floraison is null");
-            return planteService.findAllWhereFloraisonIsNull();
-        }
+    public List<Plante> getAllPlantes() {
         log.debug("REST request to get all Plantes");
         return planteService.findAll();
     }

@@ -9,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -65,14 +67,12 @@ public class Plante implements Serializable {
     @OneToOne    @JoinColumn(unique = true)
     private TypeRacine typeRacine;
 
-    @OneToOne(mappedBy = "plante")
-    @JsonIgnore
-    private Recolte recolte;
-
-    @OneToOne(mappedBy = "plante")
-    @JsonIgnore
-    private Floraison floraison;
-
+    @OneToMany(mappedBy = "plante")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Recolte> recoltes = new HashSet<>();
+    @OneToMany(mappedBy = "plante")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Floraison> floraisons = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -238,30 +238,54 @@ public class Plante implements Serializable {
         this.typeRacine = typeRacine;
     }
 
-    public Recolte getRecolte() {
-        return recolte;
+    public Set<Recolte> getRecoltes() {
+        return recoltes;
     }
 
-    public Plante recolte(Recolte recolte) {
-        this.recolte = recolte;
+    public Plante recoltes(Set<Recolte> recoltes) {
+        this.recoltes = recoltes;
         return this;
     }
 
-    public void setRecolte(Recolte recolte) {
-        this.recolte = recolte;
-    }
-
-    public Floraison getFloraison() {
-        return floraison;
-    }
-
-    public Plante floraison(Floraison floraison) {
-        this.floraison = floraison;
+    public Plante addRecolte(Recolte recolte) {
+        this.recoltes.add(recolte);
+        recolte.setPlante(this);
         return this;
     }
 
-    public void setFloraison(Floraison floraison) {
-        this.floraison = floraison;
+    public Plante removeRecolte(Recolte recolte) {
+        this.recoltes.remove(recolte);
+        recolte.setPlante(null);
+        return this;
+    }
+
+    public void setRecoltes(Set<Recolte> recoltes) {
+        this.recoltes = recoltes;
+    }
+
+    public Set<Floraison> getFloraisons() {
+        return floraisons;
+    }
+
+    public Plante floraisons(Set<Floraison> floraisons) {
+        this.floraisons = floraisons;
+        return this;
+    }
+
+    public Plante addFloraison(Floraison floraison) {
+        this.floraisons.add(floraison);
+        floraison.setPlante(this);
+        return this;
+    }
+
+    public Plante removeFloraison(Floraison floraison) {
+        this.floraisons.remove(floraison);
+        floraison.setPlante(null);
+        return this;
+    }
+
+    public void setFloraisons(Set<Floraison> floraisons) {
+        this.floraisons = floraisons;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

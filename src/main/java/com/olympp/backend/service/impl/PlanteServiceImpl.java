@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Plante.
@@ -53,34 +51,6 @@ public class PlanteServiceImpl implements PlanteService {
         return planteRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the plantes where Recolte is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Plante> findAllWhereRecolteIsNull() {
-        log.debug("Request to get all plantes where Recolte is null");
-        return StreamSupport
-            .stream(planteRepository.findAll().spliterator(), false)
-            .filter(plante -> plante.getRecolte() == null)
-            .collect(Collectors.toList());
-    }
-
-
-    /**
-     *  get all the plantes where Floraison is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Plante> findAllWhereFloraisonIsNull() {
-        log.debug("Request to get all plantes where Floraison is null");
-        return StreamSupport
-            .stream(planteRepository.findAll().spliterator(), false)
-            .filter(plante -> plante.getFloraison() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one plante by id.

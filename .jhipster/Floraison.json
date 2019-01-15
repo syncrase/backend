@@ -3,20 +3,16 @@
     "fields": [],
     "relationships": [
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "many-to-one",
             "relationshipName": "plante",
             "otherEntityName": "plante",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "floraison"
+            "otherEntityField": "id"
         },
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "many-to-one",
             "relationshipName": "mois",
             "otherEntityName": "mois",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "floraison"
+            "otherEntityField": "id"
         }
     ],
     "changelogDate": "20190110200910",

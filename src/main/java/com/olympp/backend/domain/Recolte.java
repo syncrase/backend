@@ -1,5 +1,6 @@
 package com.olympp.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,10 +23,12 @@ public class Recolte implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @ManyToOne
+    @JsonIgnoreProperties("recoltes")
     private Plante plante;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @ManyToOne
+    @JsonIgnoreProperties("recoltes")
     private Mois mois;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -93,17 +93,15 @@
             "otherEntityRelationshipName": "plante"
         },
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "one-to-many",
             "relationshipName": "recolte",
             "otherEntityName": "recolte",
-            "ownerSide": false,
             "otherEntityRelationshipName": "plante"
         },
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "one-to-many",
             "relationshipName": "floraison",
             "otherEntityName": "floraison",
-            "ownerSide": false,
             "otherEntityRelationshipName": "plante"
         }
     ],
