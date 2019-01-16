@@ -40,4 +40,6 @@ public interface EnsoleillementService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<Ensoleillement> findOneByEnsoleillement(String ensoleillement);
 }

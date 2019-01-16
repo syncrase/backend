@@ -48,6 +48,10 @@ public class TypeFeuillageResource {
         if (typeFeuillage.getId() != null) {
             throw new BadRequestAlertException("A new typeFeuillage cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Optional<TypeFeuillage> fetchedTypeFeuillage = typeFeuillageService.findOneByTypeFeuillage(typeFeuillage.getTypeFeuillage());
+        if (fetchedTypeFeuillage.isPresent() == true) {
+            throw new BadRequestAlertException("This typeFeuillage already exists", ENTITY_NAME, "typefeuillageexists");
+        }
         TypeFeuillage result = typeFeuillageService.save(typeFeuillage);
         return ResponseEntity.created(new URI("/api/type-feuillages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

@@ -34,6 +34,15 @@ public interface StrateService {
      */
     Optional<Strate> findOne(Long id);
 
+
+    /**
+     * Get the "strate" property of strate.
+     *
+     * @param strate the strate of the entity
+     * @return the entity
+     */
+    Optional<Strate> findOneByStrate(String strate);
+
     /**
      * Delete the "id" strate.
      *

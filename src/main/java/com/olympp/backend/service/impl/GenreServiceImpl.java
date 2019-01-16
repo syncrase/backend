@@ -75,4 +75,10 @@ public class GenreServiceImpl implements GenreService {
         log.debug("Request to delete Genre : {}", id);
         genreRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<Genre> findOneByName(String name) {
+        log.debug("Request to get Genre : {}", name);
+        return genreRepository.findByName(name);
+	}
 }

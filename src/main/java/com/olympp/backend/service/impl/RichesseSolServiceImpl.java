@@ -75,4 +75,10 @@ public class RichesseSolServiceImpl implements RichesseSolService {
         log.debug("Request to delete RichesseSol : {}", id);
         richesseSolRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<RichesseSol> findOneByRichesseSol(String richesseSol) {
+        log.debug("Request to get RichesseSol : {}", richesseSol);
+        return richesseSolRepository.findByRichesseSol(richesseSol);
+	}
 }

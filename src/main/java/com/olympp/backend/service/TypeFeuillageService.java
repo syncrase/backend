@@ -40,4 +40,6 @@ public interface TypeFeuillageService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<TypeFeuillage> findOneByTypeFeuillage(String typeFeuillage);
 }

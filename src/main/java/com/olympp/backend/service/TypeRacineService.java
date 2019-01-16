@@ -40,4 +40,6 @@ public interface TypeRacineService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<TypeRacine> findOneByTypeRacine(String typeRacine);
 }

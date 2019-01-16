@@ -75,4 +75,10 @@ public class VitesseCroissanceServiceImpl implements VitesseCroissanceService {
         log.debug("Request to delete VitesseCroissance : {}", id);
         vitesseCroissanceRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<VitesseCroissance> findOneByVitesseCroissance(String vitesseCroissance) {
+        log.debug("Request to get VitesseCroissance : {}", vitesseCroissance);
+        return vitesseCroissanceRepository.findByVitesseCroissance(vitesseCroissance);
+	}
 }

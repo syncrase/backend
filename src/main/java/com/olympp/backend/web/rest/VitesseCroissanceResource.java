@@ -48,6 +48,10 @@ public class VitesseCroissanceResource {
         if (vitesseCroissance.getId() != null) {
             throw new BadRequestAlertException("A new vitesseCroissance cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Optional<VitesseCroissance> fetchedVitesseCroissance = vitesseCroissanceService.findOneByVitesseCroissance(vitesseCroissance.getVitesseCroissance());
+        if (fetchedVitesseCroissance.isPresent() == true) {
+            throw new BadRequestAlertException("This vitesseCroissance already exists", ENTITY_NAME, "vitessecroissanceexists");
+        }
         VitesseCroissance result = vitesseCroissanceService.save(vitesseCroissance);
         return ResponseEntity.created(new URI("/api/vitesse-croissances/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

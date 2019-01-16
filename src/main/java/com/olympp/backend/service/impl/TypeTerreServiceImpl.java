@@ -75,4 +75,10 @@ public class TypeTerreServiceImpl implements TypeTerreService {
         log.debug("Request to delete TypeTerre : {}", id);
         typeTerreRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<TypeTerre> findOneByTypeTerre(String typeTerre) {
+        log.debug("Request to get TypeTerre : {}", typeTerre);
+        return typeTerreRepository.findByTypeTerre(typeTerre);
+	}
 }
