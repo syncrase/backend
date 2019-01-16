@@ -25,7 +25,17 @@ public class Strate implements Serializable {
     @Column(name = "strate", unique = true)
     private String strate;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Strate(String strate) {
+		super();
+		this.strate = strate;
+	}
+
+	public Strate() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

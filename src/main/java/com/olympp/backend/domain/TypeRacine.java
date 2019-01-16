@@ -25,7 +25,17 @@ public class TypeRacine implements Serializable {
     @Column(name = "type_racine", unique = true)
     private String typeRacine;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public TypeRacine(String typeRacine) {
+		super();
+		this.typeRacine = typeRacine;
+	}
+
+	public TypeRacine() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

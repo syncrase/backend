@@ -36,7 +36,21 @@ public class Reference implements Serializable {
     @JsonIgnoreProperties("references")
     private InteractionPlantePlante interactionPlantePlante;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Reference(String description, Livre livre, PageWeb pageWeb,
+			InteractionPlantePlante interactionPlantePlante) {
+		super();
+		this.description = description;
+		this.livre = livre;
+		this.pageWeb = pageWeb;
+		this.interactionPlantePlante = interactionPlantePlante;
+	}
+
+	public Reference() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

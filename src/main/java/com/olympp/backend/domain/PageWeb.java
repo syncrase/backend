@@ -33,7 +33,19 @@ public class PageWeb implements Serializable {
     @JsonIgnore
     private Reference reference;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public PageWeb(String description, String url, Reference reference) {
+		super();
+		this.description = description;
+		this.url = url;
+		this.reference = reference;
+	}
+
+	public PageWeb() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

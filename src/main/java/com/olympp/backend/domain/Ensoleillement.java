@@ -25,6 +25,14 @@ public class Ensoleillement implements Serializable {
     @Column(name = "ensoleillement", unique = true)
     private String ensoleillement;
 
+    public Ensoleillement(String ensoleillement) {
+		this.ensoleillement = ensoleillement;
+	}
+
+	public Ensoleillement() {
+		super();
+	}
+	
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
