@@ -75,4 +75,10 @@ public class TypeRacineServiceImpl implements TypeRacineService {
         log.debug("Request to delete TypeRacine : {}", id);
         typeRacineRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<TypeRacine> findOneByTypeRacine(String typeRacine) {
+        log.debug("Request to get TypeRacine : {}", typeRacine);
+        return typeRacineRepository.findByTypeRacine(typeRacine);
+	}
 }

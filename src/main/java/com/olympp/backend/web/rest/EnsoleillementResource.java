@@ -48,6 +48,11 @@ public class EnsoleillementResource {
         if (ensoleillement.getId() != null) {
             throw new BadRequestAlertException("A new ensoleillement cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Optional<Ensoleillement> fetchedEnsoleillement = ensoleillementService.findOneByEnsoleillement(ensoleillement.getEnsoleillement());
+        if (fetchedEnsoleillement.isPresent() == true) {
+            throw new BadRequestAlertException("An ensoleillement already have this name", ENTITY_NAME, "nameexists");
+        }
+        
         Ensoleillement result = ensoleillementService.save(ensoleillement);
         return ResponseEntity.created(new URI("/api/ensoleillements/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

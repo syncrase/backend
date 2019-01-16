@@ -75,4 +75,10 @@ public class FamilleServiceImpl implements FamilleService {
         log.debug("Request to delete Famille : {}", id);
         familleRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<Famille> findOneByName(String name) {
+        log.debug("Request to get Famille : {}", name);
+        return familleRepository.findByName(name);
+	}
 }

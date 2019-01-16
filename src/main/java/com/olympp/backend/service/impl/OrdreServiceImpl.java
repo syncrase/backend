@@ -75,4 +75,10 @@ public class OrdreServiceImpl implements OrdreService {
         log.debug("Request to delete Ordre : {}", id);
         ordreRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<Ordre> findOneByName(String name) {
+        log.debug("Request to get Ordre : {}", name);
+        return ordreRepository.findByNma(name);
+	}
 }

@@ -75,4 +75,10 @@ public class StrateServiceImpl implements StrateService {
         log.debug("Request to delete Strate : {}", id);
         strateRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<Strate> findOneByStrate(String strate) {
+        log.debug("Request to get Strate : {}", strate);
+        return strateRepository.findByStrate(strate);
+	}
 }

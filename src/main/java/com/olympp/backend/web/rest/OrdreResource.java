@@ -48,6 +48,10 @@ public class OrdreResource {
         if (ordre.getId() != null) {
             throw new BadRequestAlertException("A new ordre cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Optional<Ordre> fetchedOrdre = ordreService.findOneByName(ordre.getName());
+        if (fetchedOrdre.isPresent() == true) {
+            throw new BadRequestAlertException("This ordre already exists", ENTITY_NAME, "nameexists");
+        }
         Ordre result = ordreService.save(ordre);
         return ResponseEntity.created(new URI("/api/ordres/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

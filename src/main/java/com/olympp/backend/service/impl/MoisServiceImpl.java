@@ -75,4 +75,10 @@ public class MoisServiceImpl implements MoisService {
         log.debug("Request to delete Mois : {}", id);
         moisRepository.deleteById(id);
     }
+
+	@Override
+	public Optional<Mois> findOneByMois(String mois) {
+        log.debug("Request to get Mois : {}", mois);
+        return moisRepository.findByMois(mois);
+	}
 }

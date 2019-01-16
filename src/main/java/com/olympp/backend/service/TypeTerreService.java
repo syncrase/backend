@@ -40,4 +40,6 @@ public interface TypeTerreService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<TypeTerre> findOneByTypeTerre(String typeTerre);
 }

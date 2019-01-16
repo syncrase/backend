@@ -40,4 +40,6 @@ public interface GenreService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<Genre> findOneByName(String name);
 }

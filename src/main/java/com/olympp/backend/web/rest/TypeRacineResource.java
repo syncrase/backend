@@ -48,6 +48,10 @@ public class TypeRacineResource {
         if (typeRacine.getId() != null) {
             throw new BadRequestAlertException("A new typeRacine cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Optional<TypeRacine> fetchedTypeRacine = typeRacineService.findOneByTypeRacine(typeRacine.getTypeRacine());
+        if (fetchedTypeRacine.isPresent() == true) {
+            throw new BadRequestAlertException("This typeRacine already exists", ENTITY_NAME, "typeracineexists");
+        }
         TypeRacine result = typeRacineService.save(typeRacine);
         return ResponseEntity.created(new URI("/api/type-racines/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
