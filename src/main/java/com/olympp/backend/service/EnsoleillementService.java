@@ -24,12 +24,6 @@ public interface EnsoleillementService {
      * @return the list of entities
      */
     List<Ensoleillement> findAll();
-    /**
-     * Get all the EnsoleillementDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<Ensoleillement> findAllWherePlanteIsNull();
 
 
     /**

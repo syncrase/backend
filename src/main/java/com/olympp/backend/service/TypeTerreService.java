@@ -24,12 +24,6 @@ public interface TypeTerreService {
      * @return the list of entities
      */
     List<TypeTerre> findAll();
-    /**
-     * Get all the TypeTerreDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<TypeTerre> findAllWherePlanteIsNull();
 
 
     /**

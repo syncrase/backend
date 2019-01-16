@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing TypeTerre.
@@ -53,20 +51,6 @@ public class TypeTerreServiceImpl implements TypeTerreService {
         return typeTerreRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the typeTerres where Plante is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<TypeTerre> findAllWherePlanteIsNull() {
-        log.debug("Request to get all typeTerres where Plante is null");
-        return StreamSupport
-            .stream(typeTerreRepository.findAll().spliterator(), false)
-            .filter(typeTerre -> typeTerre.getPlante() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one typeTerre by id.

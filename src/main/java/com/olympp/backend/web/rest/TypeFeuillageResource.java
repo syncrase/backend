@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing TypeFeuillage.
@@ -80,16 +79,11 @@ public class TypeFeuillageResource {
     /**
      * GET  /type-feuillages : get all the typeFeuillages.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of typeFeuillages in body
      */
     @GetMapping("/type-feuillages")
     @Timed
-    public List<TypeFeuillage> getAllTypeFeuillages(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all TypeFeuillages where plante is null");
-            return typeFeuillageService.findAllWherePlanteIsNull();
-        }
+    public List<TypeFeuillage> getAllTypeFeuillages() {
         log.debug("REST request to get all TypeFeuillages");
         return typeFeuillageService.findAll();
     }

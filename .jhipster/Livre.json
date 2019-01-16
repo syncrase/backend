@@ -1,0 +1,41 @@
+{
+    "name": "Livre",
+    "fields": [
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "isbn",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "auteur",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "page",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "reference",
+            "otherEntityName": "reference",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "livre"
+        }
+    ],
+    "changelogDate": "20190116122135",
+    "javadoc": "Livre entity.\n@author Pierre TAQUET",
+    "entityTableName": "livre",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "backend",
+    "applications": "*",
+    "microserviceName": "backend"
+}

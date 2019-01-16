@@ -24,12 +24,6 @@ public interface TypeFeuillageService {
      * @return the list of entities
      */
     List<TypeFeuillage> findAll();
-    /**
-     * Get all the TypeFeuillageDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<TypeFeuillage> findAllWherePlanteIsNull();
 
 
     /**

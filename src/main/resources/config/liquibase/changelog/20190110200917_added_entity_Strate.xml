@@ -18,7 +18,7 @@
         Added the entity Strate.
     -->
     <changeSet id="20190110200917-1" author="jhipster">
-        <createTable tableName="strate" remarks="Strate enumeration. @author Pierre TAQUET">
+        <createTable tableName="strate" remarks="Strate entity. @author Pierre TAQUET">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

@@ -24,12 +24,6 @@ public interface RichesseSolService {
      * @return the list of entities
      */
     List<RichesseSol> findAll();
-    /**
-     * Get all the RichesseSolDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<RichesseSol> findAllWherePlanteIsNull();
 
 
     /**

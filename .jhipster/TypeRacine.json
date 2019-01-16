@@ -6,17 +6,9 @@
             "fieldType": "String"
         }
     ],
-    "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "plante",
-            "otherEntityName": "plante",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "typeRacine"
-        }
-    ],
+    "relationships": [],
     "changelogDate": "20190110200923",
-    "javadoc": "TypeRacine enumeration.\n@author Pierre TAQUET",
+    "javadoc": "TypeRacine entity.\n@author Pierre TAQUET",
     "entityTableName": "type_racine",
     "dto": "no",
     "pagination": "no",

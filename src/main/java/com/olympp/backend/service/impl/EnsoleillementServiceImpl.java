@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Ensoleillement.
@@ -53,20 +51,6 @@ public class EnsoleillementServiceImpl implements EnsoleillementService {
         return ensoleillementRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the ensoleillements where Plante is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Ensoleillement> findAllWherePlanteIsNull() {
-        log.debug("Request to get all ensoleillements where Plante is null");
-        return StreamSupport
-            .stream(ensoleillementRepository.findAll().spliterator(), false)
-            .filter(ensoleillement -> ensoleillement.getPlante() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one ensoleillement by id.

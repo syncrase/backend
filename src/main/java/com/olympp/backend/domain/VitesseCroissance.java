@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,10 +10,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * VitesseCroissance enumeration.
+ * VitesseCroissance entity.
  * @author Pierre TAQUET
  */
-@ApiModel(description = "VitesseCroissance enumeration. @author Pierre TAQUET")
+@ApiModel(description = "VitesseCroissance entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "vitesse_croissance")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -29,19 +28,7 @@ public class VitesseCroissance implements Serializable {
     @Column(name = "vitesse_croissance")
     private String vitesseCroissance;
 
-    @OneToOne(mappedBy = "vitesseCroissance")
-    @JsonIgnore
-    private Plante plante;
-
-    public VitesseCroissance(String vitesseCroissance) {
-		this.vitesseCroissance = vitesseCroissance;
-	}
-
-	public VitesseCroissance() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -61,19 +48,6 @@ public class VitesseCroissance implements Serializable {
 
     public void setVitesseCroissance(String vitesseCroissance) {
         this.vitesseCroissance = vitesseCroissance;
-    }
-
-    public Plante getPlante() {
-        return plante;
-    }
-
-    public VitesseCroissance plante(Plante plante) {
-        this.plante = plante;
-        return this;
-    }
-
-    public void setPlante(Plante plante) {
-        this.plante = plante;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

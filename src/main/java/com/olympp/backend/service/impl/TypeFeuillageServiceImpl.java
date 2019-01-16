@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing TypeFeuillage.
@@ -53,20 +51,6 @@ public class TypeFeuillageServiceImpl implements TypeFeuillageService {
         return typeFeuillageRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the typeFeuillages where Plante is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<TypeFeuillage> findAllWherePlanteIsNull() {
-        log.debug("Request to get all typeFeuillages where Plante is null");
-        return StreamSupport
-            .stream(typeFeuillageRepository.findAll().spliterator(), false)
-            .filter(typeFeuillage -> typeFeuillage.getPlante() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one typeFeuillage by id.

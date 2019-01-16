@@ -37,62 +37,6 @@
             "otherEntityRelationshipName": "plante"
         },
         {
-            "relationshipType": "one-to-one",
-            "relationshipName": "strate",
-            "otherEntityName": "strate",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "vitesseCroissance",
-            "otherEntityName": "vitesseCroissance",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "ensoleillement",
-            "otherEntityName": "ensoleillement",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "richesseSol",
-            "otherEntityName": "richesseSol",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "typeTerre",
-            "otherEntityName": "typeTerre",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "typeFeuillage",
-            "otherEntityName": "typeFeuillage",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "typeRacine",
-            "otherEntityName": "typeRacine",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
-        {
             "relationshipType": "one-to-many",
             "relationshipName": "recolte",
             "otherEntityName": "recolte",
@@ -103,6 +47,48 @@
             "relationshipName": "floraison",
             "otherEntityName": "floraison",
             "otherEntityRelationshipName": "plante"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "strate",
+            "otherEntityName": "strate",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "vitesseCroissance",
+            "otherEntityName": "vitesseCroissance",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "ensoleillement",
+            "otherEntityName": "ensoleillement",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "richesseSol",
+            "otherEntityName": "richesseSol",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "typeTerre",
+            "otherEntityName": "typeTerre",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "typeFeuillage",
+            "otherEntityName": "typeFeuillage",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "typeRacine",
+            "otherEntityName": "typeRacine",
+            "otherEntityField": "id"
         }
     ],
     "changelogDate": "20190110200908",

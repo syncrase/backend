@@ -6,17 +6,9 @@
             "fieldType": "String"
         }
     ],
-    "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "plante",
-            "otherEntityName": "plante",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "ensoleillement"
-        }
-    ],
+    "relationships": [],
     "changelogDate": "20190110200919",
-    "javadoc": "Ensoleillement enumeration.\n@author Pierre TAQUET",
+    "javadoc": "Ensoleillement entity.\n@author Pierre TAQUET",
     "entityTableName": "ensoleillement",
     "dto": "no",
     "pagination": "no",

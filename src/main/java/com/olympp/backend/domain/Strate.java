@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,10 +10,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Strate enumeration.
+ * Strate entity.
  * @author Pierre TAQUET
  */
-@ApiModel(description = "Strate enumeration. @author Pierre TAQUET")
+@ApiModel(description = "Strate entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "strate")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -29,19 +28,7 @@ public class Strate implements Serializable {
     @Column(name = "strate")
     private String strate;
 
-    @OneToOne(mappedBy = "strate")
-    @JsonIgnore
-    private Plante plante;
-
-    public Strate(String strate) {
-		this.strate = strate;
-	}
-
-	public Strate() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -61,19 +48,6 @@ public class Strate implements Serializable {
 
     public void setStrate(String strate) {
         this.strate = strate;
-    }
-
-    public Plante getPlante() {
-        return plante;
-    }
-
-    public Strate plante(Plante plante) {
-        this.plante = plante;
-        return this;
-    }
-
-    public void setPlante(Plante plante) {
-        this.plante = plante;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

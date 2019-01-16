@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,10 +10,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * TypeFeuillage enumeration.
+ * TypeFeuillage entity.
  * @author Pierre TAQUET
  */
-@ApiModel(description = "TypeFeuillage enumeration. @author Pierre TAQUET")
+@ApiModel(description = "TypeFeuillage entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "type_feuillage")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -29,19 +28,7 @@ public class TypeFeuillage implements Serializable {
     @Column(name = "type_feuillage")
     private String typeFeuillage;
 
-    @OneToOne(mappedBy = "typeFeuillage")
-    @JsonIgnore
-    private Plante plante;
-
-    public TypeFeuillage(String typeFeuillage) {
-		this.typeFeuillage = typeFeuillage;
-	}
-
-	public TypeFeuillage() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -61,19 +48,6 @@ public class TypeFeuillage implements Serializable {
 
     public void setTypeFeuillage(String typeFeuillage) {
         this.typeFeuillage = typeFeuillage;
-    }
-
-    public Plante getPlante() {
-        return plante;
-    }
-
-    public TypeFeuillage plante(Plante plante) {
-        this.plante = plante;
-        return this;
-    }
-
-    public void setPlante(Plante plante) {
-        this.plante = plante;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

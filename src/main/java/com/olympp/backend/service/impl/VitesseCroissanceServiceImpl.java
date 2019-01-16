@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing VitesseCroissance.
@@ -53,20 +51,6 @@ public class VitesseCroissanceServiceImpl implements VitesseCroissanceService {
         return vitesseCroissanceRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the vitesseCroissances where Plante is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<VitesseCroissance> findAllWherePlanteIsNull() {
-        log.debug("Request to get all vitesseCroissances where Plante is null");
-        return StreamSupport
-            .stream(vitesseCroissanceRepository.findAll().spliterator(), false)
-            .filter(vitesseCroissance -> vitesseCroissance.getPlante() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one vitesseCroissance by id.

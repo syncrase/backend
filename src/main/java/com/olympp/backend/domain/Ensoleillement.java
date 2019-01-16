@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,10 +10,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Ensoleillement enumeration.
+ * Ensoleillement entity.
  * @author Pierre TAQUET
  */
-@ApiModel(description = "Ensoleillement enumeration. @author Pierre TAQUET")
+@ApiModel(description = "Ensoleillement entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "ensoleillement")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -29,19 +28,7 @@ public class Ensoleillement implements Serializable {
     @Column(name = "ensoleillement")
     private String ensoleillement;
 
-    @OneToOne(mappedBy = "ensoleillement")
-    @JsonIgnore
-    private Plante plante;
-
-    public Ensoleillement(String ensoleillement) {
-		this.ensoleillement = ensoleillement;
-	}
-
-	public Ensoleillement() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -61,19 +48,6 @@ public class Ensoleillement implements Serializable {
 
     public void setEnsoleillement(String ensoleillement) {
         this.ensoleillement = ensoleillement;
-    }
-
-    public Plante getPlante() {
-        return plante;
-    }
-
-    public Ensoleillement plante(Plante plante) {
-        this.plante = plante;
-        return this;
-    }
-
-    public void setPlante(Plante plante) {
-        this.plante = plante;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

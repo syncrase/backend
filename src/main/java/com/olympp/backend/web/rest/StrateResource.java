@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing Strate.
@@ -80,16 +79,11 @@ public class StrateResource {
     /**
      * GET  /strates : get all the strates.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of strates in body
      */
     @GetMapping("/strates")
     @Timed
-    public List<Strate> getAllStrates(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all Strates where plante is null");
-            return strateService.findAllWherePlanteIsNull();
-        }
+    public List<Strate> getAllStrates() {
         log.debug("REST request to get all Strates");
         return strateService.findAll();
     }

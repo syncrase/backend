@@ -16,6 +16,12 @@
     ],
     "relationships": [
         {
+            "relationshipType": "one-to-many",
+            "relationshipName": "reference",
+            "otherEntityName": "reference",
+            "otherEntityRelationshipName": "interactionPlantePlante"
+        },
+        {
             "relationshipType": "many-to-one",
             "relationshipValidateRules": "required",
             "relationshipName": "dePlante",

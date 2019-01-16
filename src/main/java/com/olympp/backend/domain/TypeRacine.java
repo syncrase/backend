@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,97 +10,72 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * TypeRacine enumeration.
- * 
+ * TypeRacine entity.
  * @author Pierre TAQUET
  */
-@ApiModel(description = "TypeRacine enumeration. @author Pierre TAQUET")
+@ApiModel(description = "TypeRacine entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "type_racine")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class TypeRacine implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "type_racine")
-	private String typeRacine;
+    @Column(name = "type_racine")
+    private String typeRacine;
 
-	@OneToOne(mappedBy = "typeRacine")
-	@JsonIgnore
-	private Plante plante;
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Long getId() {
+        return id;
+    }
 
-	public TypeRacine(String typeRacine) {
-		this.typeRacine = typeRacine;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public TypeRacine() {
-		super();
-	}
+    public String getTypeRacine() {
+        return typeRacine;
+    }
 
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not
-	// remove
-	public Long getId() {
-		return id;
-	}
+    public TypeRacine typeRacine(String typeRacine) {
+        this.typeRacine = typeRacine;
+        return this;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setTypeRacine(String typeRacine) {
+        this.typeRacine = typeRacine;
+    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
-	public String getTypeRacine() {
-		return typeRacine;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TypeRacine typeRacine = (TypeRacine) o;
+        if (typeRacine.getId() == null || getId() == null) {
+            return false;
+        }
+        return Objects.equals(getId(), typeRacine.getId());
+    }
 
-	public TypeRacine typeRacine(String typeRacine) {
-		this.typeRacine = typeRacine;
-		return this;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
 
-	public void setTypeRacine(String typeRacine) {
-		this.typeRacine = typeRacine;
-	}
-
-	public Plante getPlante() {
-		return plante;
-	}
-
-	public TypeRacine plante(Plante plante) {
-		this.plante = plante;
-		return this;
-	}
-
-	public void setPlante(Plante plante) {
-		this.plante = plante;
-	}
-	// jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-	// setters here, do not remove
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		TypeRacine typeRacine = (TypeRacine) o;
-		if (typeRacine.getId() == null || getId() == null) {
-			return false;
-		}
-		return Objects.equals(getId(), typeRacine.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(getId());
-	}
-
-	@Override
-	public String toString() {
-		return "TypeRacine{" + "id=" + getId() + ", typeRacine='" + getTypeRacine() + "'" + "}";
-	}
+    @Override
+    public String toString() {
+        return "TypeRacine{" +
+            "id=" + getId() +
+            ", typeRacine='" + getTypeRacine() + "'" +
+            "}";
+    }
 }

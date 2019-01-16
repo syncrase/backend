@@ -6,17 +6,9 @@
             "fieldType": "String"
         }
     ],
-    "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "plante",
-            "otherEntityName": "plante",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "richesseSol"
-        }
-    ],
+    "relationships": [],
     "changelogDate": "20190110200920",
-    "javadoc": "RichesseSol enumeration.\n@author Pierre TAQUET",
+    "javadoc": "RichesseSol entity.\n@author Pierre TAQUET",
     "entityTableName": "richesse_sol",
     "dto": "no",
     "pagination": "no",

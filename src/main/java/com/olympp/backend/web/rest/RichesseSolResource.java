@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing RichesseSol.
@@ -80,16 +79,11 @@ public class RichesseSolResource {
     /**
      * GET  /richesse-sols : get all the richesseSols.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of richesseSols in body
      */
     @GetMapping("/richesse-sols")
     @Timed
-    public List<RichesseSol> getAllRichesseSols(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all RichesseSols where plante is null");
-            return richesseSolService.findAllWherePlanteIsNull();
-        }
+    public List<RichesseSol> getAllRichesseSols() {
         log.debug("REST request to get all RichesseSols");
         return richesseSolService.findAll();
     }

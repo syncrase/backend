@@ -1,5 +1,6 @@
 package com.olympp.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
@@ -9,6 +10,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -34,6 +37,9 @@ public class InteractionPlantePlante implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @OneToMany(mappedBy = "interactionPlantePlante")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Reference> references = new HashSet<>();
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
@@ -77,6 +83,31 @@ public class InteractionPlantePlante implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<Reference> getReferences() {
+        return references;
+    }
+
+    public InteractionPlantePlante references(Set<Reference> references) {
+        this.references = references;
+        return this;
+    }
+
+    public InteractionPlantePlante addReference(Reference reference) {
+        this.references.add(reference);
+        reference.setInteractionPlantePlante(this);
+        return this;
+    }
+
+    public InteractionPlantePlante removeReference(Reference reference) {
+        this.references.remove(reference);
+        reference.setInteractionPlantePlante(null);
+        return this;
+    }
+
+    public void setReferences(Set<Reference> references) {
+        this.references = references;
     }
 
     public Plante getDePlante() {

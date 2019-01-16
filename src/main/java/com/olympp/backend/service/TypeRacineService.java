@@ -24,12 +24,6 @@ public interface TypeRacineService {
      * @return the list of entities
      */
     List<TypeRacine> findAll();
-    /**
-     * Get all the TypeRacineDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<TypeRacine> findAllWherePlanteIsNull();
 
 
     /**

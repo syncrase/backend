@@ -6,17 +6,9 @@
             "fieldType": "String"
         }
     ],
-    "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "plante",
-            "otherEntityName": "plante",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "vitesseCroissance"
-        }
-    ],
+    "relationships": [],
     "changelogDate": "20190110200918",
-    "javadoc": "VitesseCroissance enumeration.\n@author Pierre TAQUET",
+    "javadoc": "VitesseCroissance entity.\n@author Pierre TAQUET",
     "entityTableName": "vitesse_croissance",
     "dto": "no",
     "pagination": "no",

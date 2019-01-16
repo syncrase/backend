@@ -18,7 +18,7 @@
         Added the entity VitesseCroissance.
     -->
     <changeSet id="20190110200918-1" author="jhipster">
-        <createTable tableName="vitesse_croissance" remarks="VitesseCroissance enumeration. @author Pierre TAQUET">
+        <createTable tableName="vitesse_croissance" remarks="VitesseCroissance entity. @author Pierre TAQUET">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

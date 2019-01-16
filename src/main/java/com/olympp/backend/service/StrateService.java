@@ -24,12 +24,6 @@ public interface StrateService {
      * @return the list of entities
      */
     List<Strate> findAll();
-    /**
-     * Get all the StrateDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<Strate> findAllWherePlanteIsNull();
 
 
     /**

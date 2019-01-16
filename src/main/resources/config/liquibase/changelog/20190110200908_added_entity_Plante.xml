@@ -39,21 +39,35 @@
             </column>
             <column name="classification_cronquist_id" type="bigint">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ux_plante_classification_cronquist_id" />
-            </column>            <column name="strate_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_strate_id" />
-            </column>            <column name="vitesse_croissance_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_vitesse_croissance_id" />
-            </column>            <column name="ensoleillement_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_ensoleillement_id" />
-            </column>            <column name="richesse_sol_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_richesse_sol_id" />
-            </column>            <column name="type_terre_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_type_terre_id" />
-            </column>            <column name="type_feuillage_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_type_feuillage_id" />
-            </column>            <column name="type_racine_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_plante_type_racine_id" />
             </column>
+            <column name="strate_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="vitesse_croissance_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="ensoleillement_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="richesse_sol_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="type_terre_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="type_feuillage_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="type_racine_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         

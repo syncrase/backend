@@ -6,17 +6,9 @@
             "fieldType": "String"
         }
     ],
-    "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "plante",
-            "otherEntityName": "plante",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "strate"
-        }
-    ],
+    "relationships": [],
     "changelogDate": "20190110200917",
-    "javadoc": "Strate enumeration.\n@author Pierre TAQUET",
+    "javadoc": "Strate entity.\n@author Pierre TAQUET",
     "entityTableName": "strate",
     "dto": "no",
     "pagination": "no",

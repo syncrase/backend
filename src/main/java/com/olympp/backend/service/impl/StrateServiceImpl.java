@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Strate.
@@ -53,20 +51,6 @@ public class StrateServiceImpl implements StrateService {
         return strateRepository.findAll();
     }
 
-
-
-    /**
-     *  get all the strates where Plante is null.
-     *  @return the list of entities
-     */
-    @Transactional(readOnly = true) 
-    public List<Strate> findAllWherePlanteIsNull() {
-        log.debug("Request to get all strates where Plante is null");
-        return StreamSupport
-            .stream(strateRepository.findAll().spliterator(), false)
-            .filter(strate -> strate.getPlante() == null)
-            .collect(Collectors.toList());
-    }
 
     /**
      * Get one strate by id.

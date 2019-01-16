@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing Ensoleillement.
@@ -80,16 +79,11 @@ public class EnsoleillementResource {
     /**
      * GET  /ensoleillements : get all the ensoleillements.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of ensoleillements in body
      */
     @GetMapping("/ensoleillements")
     @Timed
-    public List<Ensoleillement> getAllEnsoleillements(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all Ensoleillements where plante is null");
-            return ensoleillementService.findAllWherePlanteIsNull();
-        }
+    public List<Ensoleillement> getAllEnsoleillements() {
         log.debug("REST request to get all Ensoleillements");
         return ensoleillementService.findAll();
     }

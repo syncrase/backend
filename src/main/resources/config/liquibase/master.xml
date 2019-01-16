@@ -22,11 +22,15 @@
     <include file="config/liquibase/changelog/20190110200922_added_entity_TypeFeuillage.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200923_added_entity_TypeRacine.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200924_added_entity_Mois.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190116122134_added_entity_Reference.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190116122135_added_entity_Livre.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190116122136_added_entity_PageWeb.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20190110200908_added_entity_constraints_Plante.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200909_added_entity_constraints_Recolte.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200910_added_entity_constraints_Floraison.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200911_added_entity_constraints_ClassificationCronquist.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200916_added_entity_constraints_InteractionPlantePlante.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190116122134_added_entity_constraints_Reference.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

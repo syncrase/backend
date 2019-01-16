@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing TypeRacine.
@@ -80,16 +79,11 @@ public class TypeRacineResource {
     /**
      * GET  /type-racines : get all the typeRacines.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of typeRacines in body
      */
     @GetMapping("/type-racines")
     @Timed
-    public List<TypeRacine> getAllTypeRacines(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all TypeRacines where plante is null");
-            return typeRacineService.findAllWherePlanteIsNull();
-        }
+    public List<TypeRacine> getAllTypeRacines() {
         log.debug("REST request to get all TypeRacines");
         return typeRacineService.findAll();
     }

@@ -1,0 +1,44 @@
+{
+    "name": "Reference",
+    "fields": [
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "livre",
+            "otherEntityName": "livre",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "reference"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "pageWeb",
+            "otherEntityName": "pageWeb",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "reference"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "interactionPlantePlante",
+            "otherEntityName": "interactionPlantePlante",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190116122134",
+    "javadoc": "Reference entity.\n@author Pierre TAQUET",
+    "entityTableName": "reference",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "backend",
+    "applications": "*",
+    "microserviceName": "backend"
+}

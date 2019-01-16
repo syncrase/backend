@@ -24,12 +24,6 @@ public interface VitesseCroissanceService {
      * @return the list of entities
      */
     List<VitesseCroissance> findAll();
-    /**
-     * Get all the VitesseCroissanceDTO where Plante is null.
-     *
-     * @return the list of entities
-     */
-    List<VitesseCroissance> findAllWherePlanteIsNull();
 
 
     /**

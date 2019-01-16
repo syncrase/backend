@@ -18,7 +18,7 @@
         Added the entity TypeTerre.
     -->
     <changeSet id="20190110200921-1" author="jhipster">
-        <createTable tableName="type_terre" remarks="TypeTerre enumeration. @author Pierre TAQUET">
+        <createTable tableName="type_terre" remarks="TypeTerre entity. @author Pierre TAQUET">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

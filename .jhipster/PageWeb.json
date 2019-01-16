@@ -1,0 +1,33 @@
+{
+    "name": "PageWeb",
+    "fields": [
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "url",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "reference",
+            "otherEntityName": "reference",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "pageWeb"
+        }
+    ],
+    "changelogDate": "20190116122136",
+    "javadoc": "Reference entity.\n@author Pierre TAQUET",
+    "entityTableName": "page_web",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "backend",
+    "applications": "*",
+    "microserviceName": "backend"
+}

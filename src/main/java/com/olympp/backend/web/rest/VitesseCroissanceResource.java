@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 /**
  * REST controller for managing VitesseCroissance.
@@ -80,16 +79,11 @@ public class VitesseCroissanceResource {
     /**
      * GET  /vitesse-croissances : get all the vitesseCroissances.
      *
-     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of vitesseCroissances in body
      */
     @GetMapping("/vitesse-croissances")
     @Timed
-    public List<VitesseCroissance> getAllVitesseCroissances(@RequestParam(required = false) String filter) {
-        if ("plante-is-null".equals(filter)) {
-            log.debug("REST request to get all VitesseCroissances where plante is null");
-            return vitesseCroissanceService.findAllWherePlanteIsNull();
-        }
+    public List<VitesseCroissance> getAllVitesseCroissances() {
         log.debug("REST request to get all VitesseCroissances");
         return vitesseCroissanceService.findAll();
     }
