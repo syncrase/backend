@@ -28,7 +28,17 @@ public class RichesseSol implements Serializable {
     @Column(name = "richesse_sol")
     private String richesseSol;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public RichesseSol(String richesseSol) {
+		super();
+		this.richesseSol = richesseSol;
+	}
+
+	public RichesseSol() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

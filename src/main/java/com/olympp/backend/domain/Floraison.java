@@ -31,7 +31,19 @@ public class Floraison implements Serializable {
     @JsonIgnoreProperties("floraisons")
     private Mois mois;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    
+    public Floraison(Plante plante, Mois mois) {
+		super();
+		this.plante = plante;
+		this.mois = mois;
+	}
+
+	public Floraison() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

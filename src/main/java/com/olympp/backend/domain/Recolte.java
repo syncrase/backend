@@ -31,7 +31,18 @@ public class Recolte implements Serializable {
     @JsonIgnoreProperties("recoltes")
     private Mois mois;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Recolte(Plante plante, Mois mois) {
+		super();
+		this.plante = plante;
+		this.mois = mois;
+	}
+
+	public Recolte() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

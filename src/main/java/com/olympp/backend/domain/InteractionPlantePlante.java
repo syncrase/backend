@@ -50,7 +50,22 @@ public class InteractionPlantePlante implements Serializable {
     @JsonIgnoreProperties("")
     private Plante versPlante;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public InteractionPlantePlante(@Pattern(regexp = "^(-|0|\\+){1}$") String notation, String description,
+			Set<Reference> references, @NotNull Plante dePlante, @NotNull Plante versPlante) {
+		super();
+		this.notation = notation;
+		this.description = description;
+		this.references = references;
+		this.dePlante = dePlante;
+		this.versPlante = versPlante;
+	}
+
+	public InteractionPlantePlante() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

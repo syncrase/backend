@@ -81,7 +81,34 @@ public class Plante implements Serializable {
     @JsonIgnoreProperties("")
     private TypeRacine typeRacine;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Plante(@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMin,
+			@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMax, Integer tempMin, Integer tempMax,
+			@NotNull ClassificationCronquist classificationCronquist, Set<Recolte> recoltes, Set<Floraison> floraisons,
+			Strate strate, VitesseCroissance vitesseCroissance, Ensoleillement ensoleillement, RichesseSol richesseSol,
+			TypeTerre typeTerre, TypeFeuillage typeFeuillage, TypeRacine typeRacine) {
+		super();
+		this.phMin = phMin;
+		this.phMax = phMax;
+		this.tempMin = tempMin;
+		this.tempMax = tempMax;
+		this.classificationCronquist = classificationCronquist;
+		this.recoltes = recoltes;
+		this.floraisons = floraisons;
+		this.strate = strate;
+		this.vitesseCroissance = vitesseCroissance;
+		this.ensoleillement = ensoleillement;
+		this.richesseSol = richesseSol;
+		this.typeTerre = typeTerre;
+		this.typeFeuillage = typeFeuillage;
+		this.typeRacine = typeRacine;
+	}
+
+	public Plante() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

@@ -28,7 +28,17 @@ public class VitesseCroissance implements Serializable {
     @Column(name = "vitesse_croissance")
     private String vitesseCroissance;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public VitesseCroissance(String vitesseCroissance) {
+		super();
+		this.vitesseCroissance = vitesseCroissance;
+	}
+
+	public VitesseCroissance() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
