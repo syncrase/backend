@@ -25,7 +25,7 @@ public class TypeTerre implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_terre")
+    @Column(name = "type_terre", unique = true)
     private String typeTerre;
 
     public TypeTerre(String typeTerre) {

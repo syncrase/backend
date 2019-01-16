@@ -25,7 +25,7 @@ public class TypeRacine implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_racine")
+    @Column(name = "type_racine", unique = true)
     private String typeRacine;
 
     public TypeRacine(String typeRacine) {

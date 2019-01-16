@@ -25,7 +25,7 @@ public class Strate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "strate")
+    @Column(name = "strate", unique = true)
     private String strate;
 
     public Strate(String strate) {
