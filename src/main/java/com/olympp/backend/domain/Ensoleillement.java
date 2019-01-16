@@ -25,7 +25,7 @@ public class Ensoleillement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ensoleillement", unique = true)
+    @Column(name = "ensoleillement")
     private String ensoleillement;
 
     public Ensoleillement(String ensoleillement) {

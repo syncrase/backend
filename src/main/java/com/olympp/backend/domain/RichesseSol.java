@@ -25,7 +25,7 @@ public class RichesseSol implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "richesse_sol", unique = true)
+    @Column(name = "richesse_sol")
     private String richesseSol;
 
     public RichesseSol(String richesseSol) {

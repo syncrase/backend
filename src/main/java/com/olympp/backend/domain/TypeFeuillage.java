@@ -25,7 +25,7 @@ public class TypeFeuillage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_feuillage", unique = true)
+    @Column(name = "type_feuillage")
     private String typeFeuillage;
 
     public TypeFeuillage(String typeFeuillage) {

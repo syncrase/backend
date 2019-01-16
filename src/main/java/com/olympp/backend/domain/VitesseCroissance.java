@@ -25,7 +25,7 @@ public class VitesseCroissance implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vitesse_croissance", unique = true)
+    @Column(name = "vitesse_croissance")
     private String vitesseCroissance;
 
     public VitesseCroissance(String vitesseCroissance) {
