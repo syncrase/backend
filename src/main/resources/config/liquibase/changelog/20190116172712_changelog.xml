@@ -1,0 +1,340 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Pierr (generated)" id="1547659690319-1">
+        <createTable tableName="classification_cronquist">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="classification_cronquistPK"/>
+            </column>
+            <column name="espece_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="famille_id" type="BIGINT"/>
+            <column name="genre_id" type="BIGINT"/>
+            <column name="ordre_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-2">
+        <createTable tableName="ensoleillement">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="ensoleillementPK"/>
+            </column>
+            <column name="ensoleillement" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-3">
+        <createTable tableName="espece">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="especePK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-4">
+        <createTable tableName="famille">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="famillePK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-5">
+        <createTable tableName="floraison">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="floraisonPK"/>
+            </column>
+            <column name="mois_id" type="BIGINT"/>
+            <column name="plante_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-6">
+        <createTable tableName="genre">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="genrePK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-7">
+        <createTable tableName="interaction_plante_plante">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="interaction_plante_plantePK"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="notation" type="VARCHAR(255)"/>
+            <column name="de_plante_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vers_plante_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-8">
+        <createTable tableName="jhi_persistent_audit_event">
+            <column autoIncrement="true" name="event_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="jhi_persistent_audit_eventPK"/>
+            </column>
+            <column name="event_date" type="BINARY(255)"/>
+            <column name="event_type" type="VARCHAR(255)"/>
+            <column name="principal" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-9">
+        <createTable tableName="jhi_persistent_audit_evt_data">
+            <column name="event_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-10">
+        <createTable tableName="livre">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="livrePK"/>
+            </column>
+            <column name="auteur" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="isbn" type="VARCHAR(255)"/>
+            <column name="page" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-11">
+        <createTable tableName="mois">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="moisPK"/>
+            </column>
+            <column name="mois" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-12">
+        <createTable tableName="ordre">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="ordrePK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-13">
+        <createTable tableName="page_web">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="page_webPK"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="url" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-14">
+        <createTable tableName="plante">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="plantePK"/>
+            </column>
+            <column name="ph_max" type="VARCHAR(255)"/>
+            <column name="ph_min" type="VARCHAR(255)"/>
+            <column name="temp_max" type="INT"/>
+            <column name="temp_min" type="INT"/>
+            <column name="classification_cronquist_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ensoleillement_id" type="BIGINT"/>
+            <column name="richesse_sol_id" type="BIGINT"/>
+            <column name="strate_id" type="BIGINT"/>
+            <column name="type_feuillage_id" type="BIGINT"/>
+            <column name="type_racine_id" type="BIGINT"/>
+            <column name="type_terre_id" type="BIGINT"/>
+            <column name="vitesse_croissance_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-15">
+        <createTable tableName="recolte">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="recoltePK"/>
+            </column>
+            <column name="mois_id" type="BIGINT"/>
+            <column name="plante_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-16">
+        <createTable tableName="reference">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="referencePK"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="interaction_plante_plante_id" type="BIGINT"/>
+            <column name="livre_id" type="BIGINT"/>
+            <column name="page_web_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-17">
+        <createTable tableName="richesse_sol">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="richesse_solPK"/>
+            </column>
+            <column name="richesse_sol" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-18">
+        <createTable tableName="strate">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="stratePK"/>
+            </column>
+            <column name="strate" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-19">
+        <createTable tableName="type_feuillage">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="type_feuillagePK"/>
+            </column>
+            <column name="type_feuillage" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-20">
+        <createTable tableName="type_racine">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="type_racinePK"/>
+            </column>
+            <column name="type_racine" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-21">
+        <createTable tableName="type_terre">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="type_terrePK"/>
+            </column>
+            <column name="type_terre" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-22">
+        <createTable tableName="vitesse_croissance">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="vitesse_croissancePK"/>
+            </column>
+            <column name="vitesse_croissance" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-23">
+        <addPrimaryKey columnNames="event_id, name" tableName="jhi_persistent_audit_evt_data"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-24">
+        <addUniqueConstraint columnNames="ensoleillement" constraintName="UC_ENSOLEILLEMENTENSOLEILLEMENT_COL" tableName="ensoleillement"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-25">
+        <addUniqueConstraint columnNames="name" constraintName="UC_ESPECENAME_COL" tableName="espece"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-26">
+        <addUniqueConstraint columnNames="name" constraintName="UC_FAMILLENAME_COL" tableName="famille"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-27">
+        <addUniqueConstraint columnNames="name" constraintName="UC_GENRENAME_COL" tableName="genre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-28">
+        <addUniqueConstraint columnNames="mois" constraintName="UC_MOISMOIS_COL" tableName="mois"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-29">
+        <addUniqueConstraint columnNames="name" constraintName="UC_ORDRENAME_COL" tableName="ordre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-30">
+        <addUniqueConstraint columnNames="livre_id" constraintName="UC_REFERENCELIVRE_ID_COL" tableName="reference"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-31">
+        <addUniqueConstraint columnNames="page_web_id" constraintName="UC_REFERENCEPAGE_WEB_ID_COL" tableName="reference"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-32">
+        <addUniqueConstraint columnNames="richesse_sol" constraintName="UC_RICHESSE_SOLRICHESSE_SOL_COL" tableName="richesse_sol"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-33">
+        <addUniqueConstraint columnNames="strate" constraintName="UC_STRATESTRATE_COL" tableName="strate"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-34">
+        <addUniqueConstraint columnNames="type_feuillage" constraintName="UC_TYPE_FEUILLAGETYPE_FEUILLAGE_COL" tableName="type_feuillage"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-35">
+        <addUniqueConstraint columnNames="type_racine" constraintName="UC_TYPE_RACINETYPE_RACINE_COL" tableName="type_racine"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-36">
+        <addUniqueConstraint columnNames="type_terre" constraintName="UC_TYPE_TERRETYPE_TERRE_COL" tableName="type_terre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-37">
+        <addUniqueConstraint columnNames="vitesse_croissance" constraintName="UC_VITESSE_CROISSANCEVITESSE_CROISSANCE_COL" tableName="vitesse_croissance"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-38">
+        <addUniqueConstraint columnNames="plante_id, mois_id" constraintName="UK2hmkfy3nmcxeifo8eq7fh8ehh" tableName="floraison"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-39">
+        <addUniqueConstraint columnNames="plante_id, mois_id" constraintName="UK4s286qvev59il05ht6xkohq55" tableName="recolte"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-40">
+        <addUniqueConstraint columnNames="classification_cronquist_id" constraintName="UK_6lnyspm5uagjywy3koj6736ko" tableName="plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-41">
+        <addForeignKeyConstraint baseColumnNames="event_id" baseTableName="jhi_persistent_audit_evt_data" constraintName="FK2ehnyx2si4tjd2nt4q7y40v8m" deferrable="false" initiallyDeferred="false" referencedColumnNames="event_id" referencedTableName="jhi_persistent_audit_event"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-42">
+        <addForeignKeyConstraint baseColumnNames="vitesse_croissance_id" baseTableName="plante" constraintName="FK3bk5trfjq4vxov5k2ls65cjc3" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="vitesse_croissance"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-43">
+        <addForeignKeyConstraint baseColumnNames="interaction_plante_plante_id" baseTableName="reference" constraintName="FK3rka0jyp7i8neqxrl4ph0hk7p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="interaction_plante_plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-44">
+        <addForeignKeyConstraint baseColumnNames="plante_id" baseTableName="recolte" constraintName="FK5x1qxav92elg93pim7vinktwo" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-45">
+        <addForeignKeyConstraint baseColumnNames="famille_id" baseTableName="classification_cronquist" constraintName="FK6ibr9grhpc5mopxlv91oojx3d" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="famille"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-46">
+        <addForeignKeyConstraint baseColumnNames="type_feuillage_id" baseTableName="plante" constraintName="FK7rulhv928nd3nodaoacf4ytt4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="type_feuillage"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-47">
+        <addForeignKeyConstraint baseColumnNames="page_web_id" baseTableName="reference" constraintName="FK9t2rs39bcj9qsxr6s1c0rkc5t" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="page_web"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-48">
+        <addForeignKeyConstraint baseColumnNames="mois_id" baseTableName="floraison" constraintName="FK9wxp0s3mm166jevalejhfq3nk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="mois"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-49">
+        <addForeignKeyConstraint baseColumnNames="classification_cronquist_id" baseTableName="plante" constraintName="FKaydxot5rrx9tp61fknlc3od97" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="classification_cronquist"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-50">
+        <addForeignKeyConstraint baseColumnNames="vers_plante_id" baseTableName="interaction_plante_plante" constraintName="FKbkcu6mb29ivvarmll09tm7je" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-51">
+        <addForeignKeyConstraint baseColumnNames="plante_id" baseTableName="floraison" constraintName="FKdia2glxawvko4gqh94oetfgbb" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-52">
+        <addForeignKeyConstraint baseColumnNames="richesse_sol_id" baseTableName="plante" constraintName="FKdqxfacpdoq87w7j343k84dsj4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="richesse_sol"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-53">
+        <addForeignKeyConstraint baseColumnNames="de_plante_id" baseTableName="interaction_plante_plante" constraintName="FKdsi1hlnpgl5w3lld6t6dy19qo" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="plante"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-54">
+        <addForeignKeyConstraint baseColumnNames="type_terre_id" baseTableName="plante" constraintName="FKdvk4g1wbieb9wqq0o7tabe8or" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="type_terre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-55">
+        <addForeignKeyConstraint baseColumnNames="espece_id" baseTableName="classification_cronquist" constraintName="FKfjf1789qhox5swmmv9j9b3wf2" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="espece"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-56">
+        <addForeignKeyConstraint baseColumnNames="ordre_id" baseTableName="classification_cronquist" constraintName="FKgqxvi3h99bj2w8nosc0awvg28" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="ordre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-57">
+        <addForeignKeyConstraint baseColumnNames="genre_id" baseTableName="classification_cronquist" constraintName="FKjjuypjsb0ea7xr7ds4lpon9hy" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="genre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-58">
+        <addForeignKeyConstraint baseColumnNames="livre_id" baseTableName="reference" constraintName="FKkr8kl5gs8o71qq8uv6v8xrpe9" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="livre"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-59">
+        <addForeignKeyConstraint baseColumnNames="mois_id" baseTableName="recolte" constraintName="FKn3mxflh37q6r7ggnhgj324or" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="mois"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-60">
+        <addForeignKeyConstraint baseColumnNames="strate_id" baseTableName="plante" constraintName="FKnqh7a41jc2gg2ydjvbfq6fwpq" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="strate"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-61">
+        <addForeignKeyConstraint baseColumnNames="ensoleillement_id" baseTableName="plante" constraintName="FKo0xkrfhbhr8gjonek7oirtjgf" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="ensoleillement"/>
+    </changeSet>
+    <changeSet author="Pierr (generated)" id="1547659690319-62">
+        <addForeignKeyConstraint baseColumnNames="type_racine_id" baseTableName="plante" constraintName="FKorg01ircrpuemdgqt62hr8ts2" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="type_racine"/>
+    </changeSet>
+</databaseChangeLog>
