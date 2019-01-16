@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "floraison",
-uniqueConstraints={@UniqueConstraint(columnNames={"plante", "mois"})})
+uniqueConstraints={@UniqueConstraint(columnNames={"plante_id", "mois_id"})})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Floraison implements Serializable {
 

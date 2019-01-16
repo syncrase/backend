@@ -32,5 +32,6 @@
     <include file="config/liquibase/changelog/20190110200911_added_entity_constraints_ClassificationCronquist.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190110200916_added_entity_constraints_InteractionPlantePlante.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190116122134_added_entity_constraints_Reference.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190116162056_custom_add_unique_constraints_floraison_recolte.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>
