@@ -22,7 +22,7 @@ public class TypeTerre implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_terre")
+    @Column(name = "type_terre", unique = true)
     private String typeTerre;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

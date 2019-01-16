@@ -25,8 +25,8 @@ public class Mois implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "mois")
-    private String mois;
+	@Column(name = "mois", unique = true)
+	private String mois;
 
     @OneToMany(mappedBy = "mois")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

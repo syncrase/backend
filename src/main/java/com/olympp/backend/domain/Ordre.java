@@ -22,7 +22,7 @@ public class Ordre implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

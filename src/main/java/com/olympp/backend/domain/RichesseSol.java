@@ -22,7 +22,7 @@ public class RichesseSol implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "richesse_sol")
+    @Column(name = "richesse_sol", unique = true)
     private String richesseSol;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
