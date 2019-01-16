@@ -13,7 +13,8 @@ import java.util.Objects;
  * A Recolte.
  */
 @Entity
-@Table(name = "recolte")
+@Table(name = "recolte",
+uniqueConstraints={@UniqueConstraint(columnNames={"plante", "mois"})})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Recolte implements Serializable {
 
