@@ -79,6 +79,6 @@ public class OrdreServiceImpl implements OrdreService {
 	@Override
 	public Optional<Ordre> findOneByName(String name) {
         log.debug("Request to get Ordre : {}", name);
-        return ordreRepository.findByNma(name);
+        return ordreRepository.findByName(name);
 	}
 }
