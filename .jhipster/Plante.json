@@ -24,6 +24,10 @@
         {
             "fieldName": "tempMax",
             "fieldType": "Integer"
+        },
+        {
+            "fieldName": "commonName",
+            "fieldType": "String"
         }
     ],
     "relationships": [

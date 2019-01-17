@@ -31,7 +31,6 @@
         }
     ],
     "changelogDate": "20190116122134",
-    "javadoc": "Reference entity.\n@author Pierre TAQUET",
     "entityTableName": "reference",
     "dto": "no",
     "pagination": "no",

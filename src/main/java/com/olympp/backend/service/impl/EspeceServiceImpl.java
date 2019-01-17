@@ -75,10 +75,4 @@ public class EspeceServiceImpl implements EspeceService {
         log.debug("Request to delete Espece : {}", id);
         especeRepository.deleteById(id);
     }
-
-	@Override
-	public Optional<Espece> findOneByName(String name) {
-        log.debug("Request to get Espece : {}", name);
-        return especeRepository.findByName(name);
-	}
 }

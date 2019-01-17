@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * TypeFeuillage entity.
- * @author Pierre TAQUET
+ * A TypeFeuillage.
  */
-@ApiModel(description = "TypeFeuillage entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "type_feuillage")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,20 +22,10 @@ public class TypeFeuillage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_feuillage", unique = true)
+    @Column(name = "type_feuillage")
     private String typeFeuillage;
 
-    public TypeFeuillage(String typeFeuillage) {
-		super();
-		this.typeFeuillage = typeFeuillage;
-	}
-
-	public TypeFeuillage() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

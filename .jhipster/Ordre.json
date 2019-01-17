@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200912",
-    "javadoc": "Ordre entity.\n@author Pierre TAQUET",
     "entityTableName": "ordre",
     "dto": "no",
     "pagination": "no",

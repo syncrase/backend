@@ -37,6 +37,10 @@
             <column name="temp_max" type="integer">
                 <constraints nullable="true" />
             </column>
+
+            <column name="common_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="classification_cronquist_id" type="bigint">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ux_plante_classification_cronquist_id" />
             </column>

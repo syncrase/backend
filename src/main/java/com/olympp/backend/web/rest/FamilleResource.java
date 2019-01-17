@@ -48,10 +48,6 @@ public class FamilleResource {
         if (famille.getId() != null) {
             throw new BadRequestAlertException("A new famille cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Famille> fetchedFamille = familleService.findOneByName(famille.getName());
-        if (fetchedFamille.isPresent() == true) {
-            throw new BadRequestAlertException("A famille already have this name", ENTITY_NAME, "nameexists");
-        }
         Famille result = familleService.save(famille);
         return ResponseEntity.created(new URI("/api/familles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

@@ -1,7 +1,6 @@
 package com.olympp.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,9 +11,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author Pierre TAQUET
+ * A ClassificationCronquist.
  */
-@ApiModel(description = "@author Pierre TAQUET")
 @Entity
 @Table(name = "classification_cronquist")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -43,19 +41,7 @@ public class ClassificationCronquist implements Serializable {
     @JsonIgnoreProperties("")
     private Espece espece;
 
-    public ClassificationCronquist(Ordre ordre, Famille famille, Genre genre, @NotNull Espece espece) {
-		super();
-		this.ordre = ordre;
-		this.famille = famille;
-		this.genre = genre;
-		this.espece = espece;
-	}
-
-	public ClassificationCronquist() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

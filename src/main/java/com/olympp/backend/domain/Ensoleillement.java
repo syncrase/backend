@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Ensoleillement entity.
- * @author Pierre TAQUET
+ * A Ensoleillement.
  */
-@ApiModel(description = "Ensoleillement entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "ensoleillement")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,17 +22,9 @@ public class Ensoleillement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ensoleillement", unique = true)
+    @Column(name = "ensoleillement")
     private String ensoleillement;
 
-    public Ensoleillement(String ensoleillement) {
-		this.ensoleillement = ensoleillement;
-	}
-
-	public Ensoleillement() {
-		super();
-	}
-	
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;

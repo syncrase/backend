@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200919",
-    "javadoc": "Ensoleillement entity.\n@author Pierre TAQUET",
     "entityTableName": "ensoleillement",
     "dto": "no",
     "pagination": "no",

@@ -21,7 +21,6 @@
         }
     ],
     "changelogDate": "20190110200924",
-    "javadoc": "Mois enumeration.\nTODO contraindre nombre lignes\n@author Pierre TAQUET",
     "entityTableName": "mois",
     "dto": "no",
     "pagination": "no",

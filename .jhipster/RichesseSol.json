@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200920",
-    "javadoc": "RichesseSol entity.\n@author Pierre TAQUET",
     "entityTableName": "richesse_sol",
     "dto": "no",
     "pagination": "no",

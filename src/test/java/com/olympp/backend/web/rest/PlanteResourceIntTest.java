@@ -54,6 +54,9 @@ public class PlanteResourceIntTest {
     private static final Integer DEFAULT_TEMP_MAX = 1;
     private static final Integer UPDATED_TEMP_MAX = 2;
 
+    private static final String DEFAULT_COMMON_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_COMMON_NAME = "BBBBBBBBBB";
+
     @Autowired
     private PlanteRepository planteRepository;
 
@@ -102,7 +105,8 @@ public class PlanteResourceIntTest {
             .phMin(DEFAULT_PH_MIN)
             .phMax(DEFAULT_PH_MAX)
             .tempMin(DEFAULT_TEMP_MIN)
-            .tempMax(DEFAULT_TEMP_MAX);
+            .tempMax(DEFAULT_TEMP_MAX)
+            .commonName(DEFAULT_COMMON_NAME);
         // Add required entity
         ClassificationCronquist classificationCronquist = ClassificationCronquistResourceIntTest.createEntity(em);
         em.persist(classificationCronquist);
@@ -135,6 +139,7 @@ public class PlanteResourceIntTest {
         assertThat(testPlante.getPhMax()).isEqualTo(DEFAULT_PH_MAX);
         assertThat(testPlante.getTempMin()).isEqualTo(DEFAULT_TEMP_MIN);
         assertThat(testPlante.getTempMax()).isEqualTo(DEFAULT_TEMP_MAX);
+        assertThat(testPlante.getCommonName()).isEqualTo(DEFAULT_COMMON_NAME);
     }
 
     @Test
@@ -170,7 +175,8 @@ public class PlanteResourceIntTest {
             .andExpect(jsonPath("$.[*].phMin").value(hasItem(DEFAULT_PH_MIN.toString())))
             .andExpect(jsonPath("$.[*].phMax").value(hasItem(DEFAULT_PH_MAX.toString())))
             .andExpect(jsonPath("$.[*].tempMin").value(hasItem(DEFAULT_TEMP_MIN)))
-            .andExpect(jsonPath("$.[*].tempMax").value(hasItem(DEFAULT_TEMP_MAX)));
+            .andExpect(jsonPath("$.[*].tempMax").value(hasItem(DEFAULT_TEMP_MAX)))
+            .andExpect(jsonPath("$.[*].commonName").value(hasItem(DEFAULT_COMMON_NAME.toString())));
     }
     
     @Test
@@ -187,7 +193,8 @@ public class PlanteResourceIntTest {
             .andExpect(jsonPath("$.phMin").value(DEFAULT_PH_MIN.toString()))
             .andExpect(jsonPath("$.phMax").value(DEFAULT_PH_MAX.toString()))
             .andExpect(jsonPath("$.tempMin").value(DEFAULT_TEMP_MIN))
-            .andExpect(jsonPath("$.tempMax").value(DEFAULT_TEMP_MAX));
+            .andExpect(jsonPath("$.tempMax").value(DEFAULT_TEMP_MAX))
+            .andExpect(jsonPath("$.commonName").value(DEFAULT_COMMON_NAME.toString()));
     }
 
     @Test
@@ -214,7 +221,8 @@ public class PlanteResourceIntTest {
             .phMin(UPDATED_PH_MIN)
             .phMax(UPDATED_PH_MAX)
             .tempMin(UPDATED_TEMP_MIN)
-            .tempMax(UPDATED_TEMP_MAX);
+            .tempMax(UPDATED_TEMP_MAX)
+            .commonName(UPDATED_COMMON_NAME);
 
         restPlanteMockMvc.perform(put("/api/plantes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -229,6 +237,7 @@ public class PlanteResourceIntTest {
         assertThat(testPlante.getPhMax()).isEqualTo(UPDATED_PH_MAX);
         assertThat(testPlante.getTempMin()).isEqualTo(UPDATED_TEMP_MIN);
         assertThat(testPlante.getTempMax()).isEqualTo(UPDATED_TEMP_MAX);
+        assertThat(testPlante.getCommonName()).isEqualTo(UPDATED_COMMON_NAME);
     }
 
     @Test

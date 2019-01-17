@@ -40,6 +40,4 @@ public interface RichesseSolService {
      * @param id the id of the entity
      */
     void delete(Long id);
-
-	Optional<RichesseSol> findOneByRichesseSol(String richesseSol);
 }

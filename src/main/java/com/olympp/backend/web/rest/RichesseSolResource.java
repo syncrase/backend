@@ -48,10 +48,6 @@ public class RichesseSolResource {
         if (richesseSol.getId() != null) {
             throw new BadRequestAlertException("A new richesseSol cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<RichesseSol> fetchedRichesseSol = richesseSolService.findOneByRichesseSol(richesseSol.getRichesseSol());
-        if (fetchedRichesseSol.isPresent() == true) {
-            throw new BadRequestAlertException("This richesseSol already exists", ENTITY_NAME, "richesseSolexists");
-        }
         RichesseSol result = richesseSolService.save(richesseSol);
         return ResponseEntity.created(new URI("/api/richesse-sols/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

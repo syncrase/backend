@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200922",
-    "javadoc": "TypeFeuillage entity.\n@author Pierre TAQUET",
     "entityTableName": "type_feuillage",
     "dto": "no",
     "pagination": "no",

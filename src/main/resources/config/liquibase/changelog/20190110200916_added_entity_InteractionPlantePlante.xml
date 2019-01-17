@@ -18,7 +18,7 @@
         Added the entity InteractionPlantePlante.
     -->
     <changeSet id="20190110200916-1" author="jhipster">
-        <createTable tableName="interaction_plante_plante" remarks="InteractionPlantePlante entity. @author Pierre TAQUET">
+        <createTable tableName="interaction_plante_plante">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

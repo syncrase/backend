@@ -48,10 +48,6 @@ public class MoisResource {
         if (mois.getId() != null) {
             throw new BadRequestAlertException("A new mois cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Mois> fetchedMois = moisService.findOneByMois(mois.getMois());
-        if (fetchedMois.isPresent() == true) {
-            throw new BadRequestAlertException("This mois already exists", ENTITY_NAME, "moisexists");
-        }
         Mois result = moisService.save(mois);
         return ResponseEntity.created(new URI("/api/mois/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

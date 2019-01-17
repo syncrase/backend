@@ -285,9 +285,9 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 
 			// Création d'une plante
 		} catch (ConstraintViolationException cve) {
-			log.warn("Constraint violation when loading app: " + cve.getMessage());
+			log.warn("Constraint violation when loading app: " + cve.getConstraintName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("Exception thrown when populate database on initialization: " + e.getMessage());
 		}
 	}
 }

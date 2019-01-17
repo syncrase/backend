@@ -2,7 +2,6 @@ package com.olympp.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -15,10 +14,8 @@ import java.util.Set;
 import java.util.Objects;
 
 /**
- * InteractionPlantePlante entity.
- * @author Pierre TAQUET
+ * A InteractionPlantePlante.
  */
-@ApiModel(description = "InteractionPlantePlante entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "interaction_plante_plante")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -50,22 +47,7 @@ public class InteractionPlantePlante implements Serializable {
     @JsonIgnoreProperties("")
     private Plante versPlante;
 
-    public InteractionPlantePlante(@Pattern(regexp = "^(-|0|\\+){1}$") String notation, String description,
-			Set<Reference> references, @NotNull Plante dePlante, @NotNull Plante versPlante) {
-		super();
-		this.notation = notation;
-		this.description = description;
-		this.references = references;
-		this.dePlante = dePlante;
-		this.versPlante = versPlante;
-	}
-
-	public InteractionPlantePlante() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

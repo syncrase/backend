@@ -48,10 +48,6 @@ public class TypeTerreResource {
         if (typeTerre.getId() != null) {
             throw new BadRequestAlertException("A new typeTerre cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<TypeTerre> fetchedTypeTerre = typeTerreService.findOneByTypeTerre(typeTerre.getTypeTerre());
-        if (fetchedTypeTerre.isPresent() == true) {
-            throw new BadRequestAlertException("This typeTerre already exists", ENTITY_NAME, "typeterreexists");
-        }
         TypeTerre result = typeTerreService.save(typeTerre);
         return ResponseEntity.created(new URI("/api/type-terres/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

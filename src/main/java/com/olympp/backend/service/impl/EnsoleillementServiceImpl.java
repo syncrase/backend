@@ -75,10 +75,4 @@ public class EnsoleillementServiceImpl implements EnsoleillementService {
         log.debug("Request to delete Ensoleillement : {}", id);
         ensoleillementRepository.deleteById(id);
     }
-
-	@Override
-	public Optional<Ensoleillement> findOneByEnsoleillement(String ensoleillement) {
-        log.debug("Request to get Ensoleillement : {}", ensoleillement);
-        return ensoleillementRepository.findByEnsoleillement(ensoleillement);
-	}
 }

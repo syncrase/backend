@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * RichesseSol entity.
- * @author Pierre TAQUET
+ * A RichesseSol.
  */
-@ApiModel(description = "RichesseSol entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "richesse_sol")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,20 +22,10 @@ public class RichesseSol implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "richesse_sol", unique = true)
+    @Column(name = "richesse_sol")
     private String richesseSol;
 
-    public RichesseSol(String richesseSol) {
-		super();
-		this.richesseSol = richesseSol;
-	}
-
-	public RichesseSol() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

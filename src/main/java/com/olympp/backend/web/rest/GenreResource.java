@@ -48,10 +48,6 @@ public class GenreResource {
         if (genre.getId() != null) {
             throw new BadRequestAlertException("A new genre cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Genre> fetchedGenre = genreService.findOneByName(genre.getName());
-        if (fetchedGenre.isPresent() == true) {
-            throw new BadRequestAlertException("This genre already exists", ENTITY_NAME, "nameexists");
-        }
         Genre result = genreService.save(genre);
         return ResponseEntity.created(new URI("/api/genres/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

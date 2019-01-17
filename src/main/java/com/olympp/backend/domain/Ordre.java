@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Ordre entity.
- * @author Pierre TAQUET
+ * A Ordre.
  */
-@ApiModel(description = "Ordre entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "ordre")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,18 +22,10 @@ public class Ordre implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
-    public Ordre(String name) {
-		this.name = name;
-	}
-
-	public Ordre() {
-		super();
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

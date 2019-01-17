@@ -1,7 +1,6 @@
 package com.olympp.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -11,10 +10,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Livre entity.
- * @author Pierre TAQUET
+ * A Livre.
  */
-@ApiModel(description = "Livre entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "livre")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -42,21 +39,7 @@ public class Livre implements Serializable {
     @JsonIgnore
     private Reference reference;
 
-    public Livre(String description, String isbn, String auteur, Integer page, Reference reference) {
-		super();
-		this.description = description;
-		this.isbn = isbn;
-		this.auteur = auteur;
-		this.page = page;
-		this.reference = reference;
-	}
-
-	public Livre() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

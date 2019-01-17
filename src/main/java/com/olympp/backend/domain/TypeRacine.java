@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * TypeRacine entity.
- * @author Pierre TAQUET
+ * A TypeRacine.
  */
-@ApiModel(description = "TypeRacine entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "type_racine")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,20 +22,10 @@ public class TypeRacine implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_racine", unique = true)
+    @Column(name = "type_racine")
     private String typeRacine;
 
-    public TypeRacine(String typeRacine) {
-		super();
-		this.typeRacine = typeRacine;
-	}
-
-	public TypeRacine() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

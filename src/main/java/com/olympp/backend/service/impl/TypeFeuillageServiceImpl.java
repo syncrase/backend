@@ -75,10 +75,4 @@ public class TypeFeuillageServiceImpl implements TypeFeuillageService {
         log.debug("Request to delete TypeFeuillage : {}", id);
         typeFeuillageRepository.deleteById(id);
     }
-
-	@Override
-	public Optional<TypeFeuillage> findOneByTypeFeuillage(String typeFeuillage) {
-        log.debug("Request to get TypeFeuillage : {}", typeFeuillage);
-        return typeFeuillageRepository.findByTypeFeuillage(typeFeuillage);
-	}
 }

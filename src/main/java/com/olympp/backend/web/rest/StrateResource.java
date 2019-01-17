@@ -48,10 +48,6 @@ public class StrateResource {
         if (strate.getId() != null) {
             throw new BadRequestAlertException("A new strate cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Strate> fetchedStrate = strateService.findOneByStrate(strate.getStrate());
-        if (fetchedStrate.isPresent() == true) {
-            throw new BadRequestAlertException("A strate already have this name", ENTITY_NAME, "strateexists");
-        }
         Strate result = strateService.save(strate);
         return ResponseEntity.created(new URI("/api/strates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

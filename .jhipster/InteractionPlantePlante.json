@@ -37,7 +37,6 @@
         }
     ],
     "changelogDate": "20190110200916",
-    "javadoc": "InteractionPlantePlante entity.\n@author Pierre TAQUET",
     "entityTableName": "interaction_plante_plante",
     "dto": "no",
     "pagination": "no",

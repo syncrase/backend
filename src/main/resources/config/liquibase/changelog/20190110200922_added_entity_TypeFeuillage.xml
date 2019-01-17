@@ -18,7 +18,7 @@
         Added the entity TypeFeuillage.
     -->
     <changeSet id="20190110200922-1" author="jhipster">
-        <createTable tableName="type_feuillage" remarks="TypeFeuillage entity. @author Pierre TAQUET">
+        <createTable tableName="type_feuillage">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

@@ -1,6 +1,5 @@
 package com.olympp.backend.domain;
 
-import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -10,10 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Strate entity.
- * @author Pierre TAQUET
+ * A Strate.
  */
-@ApiModel(description = "Strate entity. @author Pierre TAQUET")
 @Entity
 @Table(name = "strate")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -25,20 +22,10 @@ public class Strate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "strate", unique = true)
+    @Column(name = "strate")
     private String strate;
 
-    public Strate(String strate) {
-		super();
-		this.strate = strate;
-	}
-
-	public Strate() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

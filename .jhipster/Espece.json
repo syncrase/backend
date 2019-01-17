@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200915",
-    "javadoc": "Espece entity.\n@author Pierre TAQUET",
     "entityTableName": "espece",
     "dto": "no",
     "pagination": "no",

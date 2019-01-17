@@ -48,10 +48,6 @@ public class EspeceResource {
         if (espece.getId() != null) {
             throw new BadRequestAlertException("A new espece cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Espece> fetchedEspece = especeService.findOneByName(espece.getName());
-        if (fetchedEspece.isPresent() == true) {
-            throw new BadRequestAlertException("An espece already have this name", ENTITY_NAME, "nameexists");
-        }
         Espece result = especeService.save(espece);
         return ResponseEntity.created(new URI("/api/especes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

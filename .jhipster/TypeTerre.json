@@ -8,7 +8,6 @@
     ],
     "relationships": [],
     "changelogDate": "20190110200921",
-    "javadoc": "TypeTerre entity.\n@author Pierre TAQUET",
     "entityTableName": "type_terre",
     "dto": "no",
     "pagination": "no",

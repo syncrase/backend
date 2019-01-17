@@ -18,7 +18,7 @@
         Added the entity Ensoleillement.
     -->
     <changeSet id="20190110200919-1" author="jhipster">
-        <createTable tableName="ensoleillement" remarks="Ensoleillement entity. @author Pierre TAQUET">
+        <createTable tableName="ensoleillement">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

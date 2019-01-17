@@ -28,7 +28,6 @@
         }
     ],
     "changelogDate": "20190116122135",
-    "javadoc": "Livre entity.\n@author Pierre TAQUET",
     "entityTableName": "livre",
     "dto": "no",
     "pagination": "no",
