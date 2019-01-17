@@ -84,16 +84,18 @@ public class Plante implements Serializable {
     @JsonIgnoreProperties("")
     private TypeRacine typeRacine;
 
-    public Plante(@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMin,
+	public Plante(@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMin,
 			@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMax, Integer tempMin, Integer tempMax,
-			@NotNull ClassificationCronquist classificationCronquist, Set<Recolte> recoltes, Set<Floraison> floraisons,
-			Strate strate, VitesseCroissance vitesseCroissance, Ensoleillement ensoleillement, RichesseSol richesseSol,
-			TypeTerre typeTerre, TypeFeuillage typeFeuillage, TypeRacine typeRacine) {
+			String commonName, @NotNull ClassificationCronquist classificationCronquist, Set<Recolte> recoltes,
+			Set<Floraison> floraisons, Strate strate, VitesseCroissance vitesseCroissance,
+			Ensoleillement ensoleillement, RichesseSol richesseSol, TypeTerre typeTerre, TypeFeuillage typeFeuillage,
+			TypeRacine typeRacine) {
 		super();
 		this.phMin = phMin;
 		this.phMax = phMax;
 		this.tempMin = tempMin;
 		this.tempMax = tempMax;
+		this.commonName = commonName;
 		this.classificationCronquist = classificationCronquist;
 		this.recoltes = recoltes;
 		this.floraisons = floraisons;
