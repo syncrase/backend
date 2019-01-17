@@ -35,11 +35,21 @@ public class Mois implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Floraison> floraisons = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    
+    public Mois(String mois) {
+		super();
+		this.mois = mois;
+	}
+
+	public Mois() {
+		super();
+	}
+
     public Long getId() {
         return id;
     }
-
-    public void setId(Long id) {
+    
+	public void setId(Long id) {
         this.id = id;
     }
 

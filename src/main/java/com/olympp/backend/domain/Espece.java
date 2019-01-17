@@ -30,7 +30,16 @@ public class Espece implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public Espece(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Espece() {
+		super();
+	}
+
+	public void setId(Long id) {
         this.id = id;
     }
 

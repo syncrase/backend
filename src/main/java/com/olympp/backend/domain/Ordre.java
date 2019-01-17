@@ -25,7 +25,16 @@ public class Ordre implements Serializable {
     @Column(name = "name", unique = true)
     private String name;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Ordre(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Ordre() {
+		super();
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

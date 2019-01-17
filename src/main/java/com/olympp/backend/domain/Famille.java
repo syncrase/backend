@@ -25,7 +25,16 @@ public class Famille implements Serializable {
     @Column(name = "name")
     private String name;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Famille() {
+		super();
+	}
+
+	public Famille(String name) {
+		super();
+		this.name = name;
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

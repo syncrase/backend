@@ -25,7 +25,16 @@ public class Genre implements Serializable {
     @Column(name = "name", unique = true)
     private String name;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Genre(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Genre() {
+		super();
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
