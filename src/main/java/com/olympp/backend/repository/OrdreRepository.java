@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrdreRepository extends JpaRepository<Ordre, Long> {
 
-	Optional<Ordre> findByNma(String name);
+	Optional<Ordre> findByName(String name);
 
 }
