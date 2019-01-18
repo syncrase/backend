@@ -59,7 +59,6 @@ public class InteractionPlantePlante implements Serializable {
 
 	public InteractionPlantePlante() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
