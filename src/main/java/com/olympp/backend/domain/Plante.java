@@ -46,8 +46,9 @@ public class Plante implements Serializable {
     @Column(name = "common_name")
     private String commonName;
 
-    @OneToOne(optional = false)    @NotNull
-    @JoinColumn(unique = true)
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties("")
     private ClassificationCronquist classificationCronquist;
 
     @OneToMany(mappedBy = "plante")
@@ -110,7 +111,6 @@ public class Plante implements Serializable {
 
 	public Plante() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
