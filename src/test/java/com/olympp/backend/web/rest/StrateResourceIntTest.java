@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Strate;
 import com.olympp.backend.repository.StrateRepository;
 import com.olympp.backend.service.StrateService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.StrateCriteria;
+import com.olympp.backend.service.StrateQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class StrateResourceIntTest {
     private StrateService strateService;
 
     @Autowired
+    private StrateQueryService strateQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class StrateResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final StrateResource strateResource = new StrateResource(strateService);
+        final StrateResource strateResource = new StrateResource(strateService, strateQueryService);
         this.restStrateMockMvc = MockMvcBuilders.standaloneSetup(strateResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class StrateResourceIntTest {
             .andExpect(jsonPath("$.id").value(strate.getId().intValue()))
             .andExpect(jsonPath("$.strate").value(DEFAULT_STRATE.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllStratesByStrateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        strateRepository.saveAndFlush(strate);
+
+        // Get all the strateList where strate equals to DEFAULT_STRATE
+        defaultStrateShouldBeFound("strate.equals=" + DEFAULT_STRATE);
+
+        // Get all the strateList where strate equals to UPDATED_STRATE
+        defaultStrateShouldNotBeFound("strate.equals=" + UPDATED_STRATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllStratesByStrateIsInShouldWork() throws Exception {
+        // Initialize the database
+        strateRepository.saveAndFlush(strate);
+
+        // Get all the strateList where strate in DEFAULT_STRATE or UPDATED_STRATE
+        defaultStrateShouldBeFound("strate.in=" + DEFAULT_STRATE + "," + UPDATED_STRATE);
+
+        // Get all the strateList where strate equals to UPDATED_STRATE
+        defaultStrateShouldNotBeFound("strate.in=" + UPDATED_STRATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllStratesByStrateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        strateRepository.saveAndFlush(strate);
+
+        // Get all the strateList where strate is not null
+        defaultStrateShouldBeFound("strate.specified=true");
+
+        // Get all the strateList where strate is null
+        defaultStrateShouldNotBeFound("strate.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultStrateShouldBeFound(String filter) throws Exception {
+        restStrateMockMvc.perform(get("/api/strates?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(strate.getId().intValue())))
+            .andExpect(jsonPath("$.[*].strate").value(hasItem(DEFAULT_STRATE.toString())));
+
+        // Check, that the count call also returns 1
+        restStrateMockMvc.perform(get("/api/strates/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultStrateShouldNotBeFound(String filter) throws Exception {
+        restStrateMockMvc.perform(get("/api/strates?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restStrateMockMvc.perform(get("/api/strates/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

@@ -5,6 +5,8 @@ import com.olympp.backend.domain.InteractionPlantePlante;
 import com.olympp.backend.service.InteractionPlantePlanteService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.InteractionPlantePlanteCriteria;
+import com.olympp.backend.service.InteractionPlantePlanteQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,11 @@ public class InteractionPlantePlanteResource {
 
     private final InteractionPlantePlanteService interactionPlantePlanteService;
 
-    public InteractionPlantePlanteResource(InteractionPlantePlanteService interactionPlantePlanteService) {
+    private final InteractionPlantePlanteQueryService interactionPlantePlanteQueryService;
+
+    public InteractionPlantePlanteResource(InteractionPlantePlanteService interactionPlantePlanteService, InteractionPlantePlanteQueryService interactionPlantePlanteQueryService) {
         this.interactionPlantePlanteService = interactionPlantePlanteService;
+        this.interactionPlantePlanteQueryService = interactionPlantePlanteQueryService;
     }
 
     /**
@@ -80,13 +85,28 @@ public class InteractionPlantePlanteResource {
     /**
      * GET  /interaction-plante-plantes : get all the interactionPlantePlantes.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of interactionPlantePlantes in body
      */
     @GetMapping("/interaction-plante-plantes")
     @Timed
-    public List<InteractionPlantePlante> getAllInteractionPlantePlantes() {
-        log.debug("REST request to get all InteractionPlantePlantes");
-        return interactionPlantePlanteService.findAll();
+    public ResponseEntity<List<InteractionPlantePlante>> getAllInteractionPlantePlantes(InteractionPlantePlanteCriteria criteria) {
+        log.debug("REST request to get InteractionPlantePlantes by criteria: {}", criteria);
+        List<InteractionPlantePlante> entityList = interactionPlantePlanteQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /interaction-plante-plantes/count : count all the interactionPlantePlantes.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/interaction-plante-plantes/count")
+    @Timed
+    public ResponseEntity<Long> countInteractionPlantePlantes(InteractionPlantePlanteCriteria criteria) {
+        log.debug("REST request to count InteractionPlantePlantes by criteria: {}", criteria);
+        return ResponseEntity.ok().body(interactionPlantePlanteQueryService.countByCriteria(criteria));
     }
 
     /**

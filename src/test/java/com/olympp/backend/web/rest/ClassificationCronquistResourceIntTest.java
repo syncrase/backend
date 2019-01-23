@@ -3,10 +3,15 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.ClassificationCronquist;
+import com.olympp.backend.domain.Ordre;
+import com.olympp.backend.domain.Famille;
+import com.olympp.backend.domain.Genre;
 import com.olympp.backend.domain.Espece;
 import com.olympp.backend.repository.ClassificationCronquistRepository;
 import com.olympp.backend.service.ClassificationCronquistService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.ClassificationCronquistCriteria;
+import com.olympp.backend.service.ClassificationCronquistQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +54,9 @@ public class ClassificationCronquistResourceIntTest {
     private ClassificationCronquistService classificationCronquistService;
 
     @Autowired
+    private ClassificationCronquistQueryService classificationCronquistQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -70,7 +78,7 @@ public class ClassificationCronquistResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ClassificationCronquistResource classificationCronquistResource = new ClassificationCronquistResource(classificationCronquistService);
+        final ClassificationCronquistResource classificationCronquistResource = new ClassificationCronquistResource(classificationCronquistService, classificationCronquistQueryService);
         this.restClassificationCronquistMockMvc = MockMvcBuilders.standaloneSetup(classificationCronquistResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -161,6 +169,115 @@ public class ClassificationCronquistResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(classificationCronquist.getId().intValue()));
     }
+
+    @Test
+    @Transactional
+    public void getAllClassificationCronquistsByOrdreIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Ordre ordre = OrdreResourceIntTest.createEntity(em);
+        em.persist(ordre);
+        em.flush();
+        classificationCronquist.setOrdre(ordre);
+        classificationCronquistRepository.saveAndFlush(classificationCronquist);
+        Long ordreId = ordre.getId();
+
+        // Get all the classificationCronquistList where ordre equals to ordreId
+        defaultClassificationCronquistShouldBeFound("ordreId.equals=" + ordreId);
+
+        // Get all the classificationCronquistList where ordre equals to ordreId + 1
+        defaultClassificationCronquistShouldNotBeFound("ordreId.equals=" + (ordreId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassificationCronquistsByFamilleIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Famille famille = FamilleResourceIntTest.createEntity(em);
+        em.persist(famille);
+        em.flush();
+        classificationCronquist.setFamille(famille);
+        classificationCronquistRepository.saveAndFlush(classificationCronquist);
+        Long familleId = famille.getId();
+
+        // Get all the classificationCronquistList where famille equals to familleId
+        defaultClassificationCronquistShouldBeFound("familleId.equals=" + familleId);
+
+        // Get all the classificationCronquistList where famille equals to familleId + 1
+        defaultClassificationCronquistShouldNotBeFound("familleId.equals=" + (familleId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassificationCronquistsByGenreIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Genre genre = GenreResourceIntTest.createEntity(em);
+        em.persist(genre);
+        em.flush();
+        classificationCronquist.setGenre(genre);
+        classificationCronquistRepository.saveAndFlush(classificationCronquist);
+        Long genreId = genre.getId();
+
+        // Get all the classificationCronquistList where genre equals to genreId
+        defaultClassificationCronquistShouldBeFound("genreId.equals=" + genreId);
+
+        // Get all the classificationCronquistList where genre equals to genreId + 1
+        defaultClassificationCronquistShouldNotBeFound("genreId.equals=" + (genreId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassificationCronquistsByEspeceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Espece espece = EspeceResourceIntTest.createEntity(em);
+        em.persist(espece);
+        em.flush();
+        classificationCronquist.setEspece(espece);
+        classificationCronquistRepository.saveAndFlush(classificationCronquist);
+        Long especeId = espece.getId();
+
+        // Get all the classificationCronquistList where espece equals to especeId
+        defaultClassificationCronquistShouldBeFound("especeId.equals=" + especeId);
+
+        // Get all the classificationCronquistList where espece equals to especeId + 1
+        defaultClassificationCronquistShouldNotBeFound("especeId.equals=" + (especeId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultClassificationCronquistShouldBeFound(String filter) throws Exception {
+        restClassificationCronquistMockMvc.perform(get("/api/classification-cronquists?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(classificationCronquist.getId().intValue())));
+
+        // Check, that the count call also returns 1
+        restClassificationCronquistMockMvc.perform(get("/api/classification-cronquists/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultClassificationCronquistShouldNotBeFound(String filter) throws Exception {
+        restClassificationCronquistMockMvc.perform(get("/api/classification-cronquists?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restClassificationCronquistMockMvc.perform(get("/api/classification-cronquists/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

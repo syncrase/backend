@@ -56,5 +56,16 @@
                                  referencedColumnNames="id"
                                  referencedTableName="type_racine"/>
 
+        <addForeignKeyConstraint baseColumnNames="plantes_id"
+                                 baseTableName="plante_plant_common_name"
+                                 constraintName="fk_plante_plant_common_name_plantes_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="plante"/>
+        <addForeignKeyConstraint baseColumnNames="plant_common_names_id"
+                                 baseTableName="plante_plant_common_name"
+                                 constraintName="fk_plante_plant_common_name_plant_common_names_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="plant_common_name"/>
+        
     </changeSet>
 </databaseChangeLog>

@@ -40,6 +40,4 @@ public interface FamilleService {
      * @param id the id of the entity
      */
     void delete(Long id);
-
-	Optional<Famille> findOneByName(String name);
 }

@@ -33,16 +33,15 @@ public class PageWeb implements Serializable {
     @JsonIgnore
     private Reference reference;
 
-    public PageWeb(String description, String url, Reference reference) {
+    public PageWeb() {
+		super();
+	}
+
+	public PageWeb(String description, String url, Reference reference) {
 		super();
 		this.description = description;
 		this.url = url;
 		this.reference = reference;
-	}
-
-	public PageWeb() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

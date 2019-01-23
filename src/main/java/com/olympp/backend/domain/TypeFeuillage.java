@@ -22,17 +22,16 @@ public class TypeFeuillage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_feuillage", unique = true)
+    @Column(name = "type_feuillage")
     private String typeFeuillage;
-
-    public TypeFeuillage(String typeFeuillage) {
-		super();
-		this.typeFeuillage = typeFeuillage;
-	}
 
 	public TypeFeuillage() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public TypeFeuillage(String typeFeuillage) {
+		super();
+		this.typeFeuillage = typeFeuillage;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

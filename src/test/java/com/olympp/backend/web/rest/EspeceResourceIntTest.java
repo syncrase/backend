@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Espece;
 import com.olympp.backend.repository.EspeceRepository;
 import com.olympp.backend.service.EspeceService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.EspeceCriteria;
+import com.olympp.backend.service.EspeceQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class EspeceResourceIntTest {
     private EspeceService especeService;
 
     @Autowired
+    private EspeceQueryService especeQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class EspeceResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EspeceResource especeResource = new EspeceResource(especeService);
+        final EspeceResource especeResource = new EspeceResource(especeService, especeQueryService);
         this.restEspeceMockMvc = MockMvcBuilders.standaloneSetup(especeResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class EspeceResourceIntTest {
             .andExpect(jsonPath("$.id").value(espece.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllEspecesByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        especeRepository.saveAndFlush(espece);
+
+        // Get all the especeList where name equals to DEFAULT_NAME
+        defaultEspeceShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the especeList where name equals to UPDATED_NAME
+        defaultEspeceShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllEspecesByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        especeRepository.saveAndFlush(espece);
+
+        // Get all the especeList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultEspeceShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the especeList where name equals to UPDATED_NAME
+        defaultEspeceShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllEspecesByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        especeRepository.saveAndFlush(espece);
+
+        // Get all the especeList where name is not null
+        defaultEspeceShouldBeFound("name.specified=true");
+
+        // Get all the especeList where name is null
+        defaultEspeceShouldNotBeFound("name.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultEspeceShouldBeFound(String filter) throws Exception {
+        restEspeceMockMvc.perform(get("/api/especes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(espece.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+
+        // Check, that the count call also returns 1
+        restEspeceMockMvc.perform(get("/api/especes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultEspeceShouldNotBeFound(String filter) throws Exception {
+        restEspeceMockMvc.perform(get("/api/especes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restEspeceMockMvc.perform(get("/api/especes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

@@ -22,17 +22,16 @@ public class RichesseSol implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "richesse_sol", unique = true)
+    @Column(name = "richesse_sol")
     private String richesseSol;
-
-    public RichesseSol(String richesseSol) {
-		super();
-		this.richesseSol = richesseSol;
-	}
 
 	public RichesseSol() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public RichesseSol(String richesseSol) {
+		super();
+		this.richesseSol = richesseSol;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

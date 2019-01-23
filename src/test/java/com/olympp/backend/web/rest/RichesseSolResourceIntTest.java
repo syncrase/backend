@@ -6,6 +6,8 @@ import com.olympp.backend.domain.RichesseSol;
 import com.olympp.backend.repository.RichesseSolRepository;
 import com.olympp.backend.service.RichesseSolService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.RichesseSolCriteria;
+import com.olympp.backend.service.RichesseSolQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class RichesseSolResourceIntTest {
     private RichesseSolService richesseSolService;
 
     @Autowired
+    private RichesseSolQueryService richesseSolQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class RichesseSolResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RichesseSolResource richesseSolResource = new RichesseSolResource(richesseSolService);
+        final RichesseSolResource richesseSolResource = new RichesseSolResource(richesseSolService, richesseSolQueryService);
         this.restRichesseSolMockMvc = MockMvcBuilders.standaloneSetup(richesseSolResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class RichesseSolResourceIntTest {
             .andExpect(jsonPath("$.id").value(richesseSol.getId().intValue()))
             .andExpect(jsonPath("$.richesseSol").value(DEFAULT_RICHESSE_SOL.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllRichesseSolsByRichesseSolIsEqualToSomething() throws Exception {
+        // Initialize the database
+        richesseSolRepository.saveAndFlush(richesseSol);
+
+        // Get all the richesseSolList where richesseSol equals to DEFAULT_RICHESSE_SOL
+        defaultRichesseSolShouldBeFound("richesseSol.equals=" + DEFAULT_RICHESSE_SOL);
+
+        // Get all the richesseSolList where richesseSol equals to UPDATED_RICHESSE_SOL
+        defaultRichesseSolShouldNotBeFound("richesseSol.equals=" + UPDATED_RICHESSE_SOL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRichesseSolsByRichesseSolIsInShouldWork() throws Exception {
+        // Initialize the database
+        richesseSolRepository.saveAndFlush(richesseSol);
+
+        // Get all the richesseSolList where richesseSol in DEFAULT_RICHESSE_SOL or UPDATED_RICHESSE_SOL
+        defaultRichesseSolShouldBeFound("richesseSol.in=" + DEFAULT_RICHESSE_SOL + "," + UPDATED_RICHESSE_SOL);
+
+        // Get all the richesseSolList where richesseSol equals to UPDATED_RICHESSE_SOL
+        defaultRichesseSolShouldNotBeFound("richesseSol.in=" + UPDATED_RICHESSE_SOL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRichesseSolsByRichesseSolIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        richesseSolRepository.saveAndFlush(richesseSol);
+
+        // Get all the richesseSolList where richesseSol is not null
+        defaultRichesseSolShouldBeFound("richesseSol.specified=true");
+
+        // Get all the richesseSolList where richesseSol is null
+        defaultRichesseSolShouldNotBeFound("richesseSol.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultRichesseSolShouldBeFound(String filter) throws Exception {
+        restRichesseSolMockMvc.perform(get("/api/richesse-sols?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(richesseSol.getId().intValue())))
+            .andExpect(jsonPath("$.[*].richesseSol").value(hasItem(DEFAULT_RICHESSE_SOL.toString())));
+
+        // Check, that the count call also returns 1
+        restRichesseSolMockMvc.perform(get("/api/richesse-sols/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultRichesseSolShouldNotBeFound(String filter) throws Exception {
+        restRichesseSolMockMvc.perform(get("/api/richesse-sols?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restRichesseSolMockMvc.perform(get("/api/richesse-sols/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

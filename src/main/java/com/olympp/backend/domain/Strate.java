@@ -22,17 +22,16 @@ public class Strate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "strate", unique = true)
+    @Column(name = "strate")
     private String strate;
-
-    public Strate(String strate) {
-		super();
-		this.strate = strate;
-	}
 
 	public Strate() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public Strate(String strate) {
+		super();
+		this.strate = strate;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

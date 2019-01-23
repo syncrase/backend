@@ -47,7 +47,11 @@ public class InteractionPlantePlante implements Serializable {
     @JsonIgnoreProperties("")
     private Plante versPlante;
 
-    public InteractionPlantePlante(@Pattern(regexp = "^(-|0|\\+){1}$") String notation, String description,
+	public InteractionPlantePlante() {
+		super();
+	}
+
+	public InteractionPlantePlante(@Pattern(regexp = "^(-|0|\\+){1}$") String notation, String description,
 			Set<Reference> references, @NotNull Plante dePlante, @NotNull Plante versPlante) {
 		super();
 		this.notation = notation;
@@ -55,10 +59,6 @@ public class InteractionPlantePlante implements Serializable {
 		this.references = references;
 		this.dePlante = dePlante;
 		this.versPlante = versPlante;
-	}
-
-	public InteractionPlantePlante() {
-		super();
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

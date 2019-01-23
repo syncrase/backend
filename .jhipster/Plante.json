@@ -26,20 +26,11 @@
             "fieldType": "Integer"
         },
         {
-            "fieldName": "commonName",
+            "fieldName": "description",
             "fieldType": "String"
         }
     ],
     "relationships": [
-        {
-            "relationshipType": "one-to-one",
-            "relationshipValidateRules": "required",
-            "relationshipName": "classificationCronquist",
-            "otherEntityName": "classificationCronquist",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "plante"
-        },
         {
             "relationshipType": "one-to-many",
             "relationshipName": "recolte",
@@ -51,6 +42,13 @@
             "relationshipName": "floraison",
             "otherEntityName": "floraison",
             "otherEntityRelationshipName": "plante"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": "required",
+            "relationshipName": "classificationCronquist",
+            "otherEntityName": "classificationCronquist",
+            "otherEntityField": "id"
         },
         {
             "relationshipType": "many-to-one",
@@ -93,6 +91,14 @@
             "relationshipName": "typeRacine",
             "otherEntityName": "typeRacine",
             "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "plante",
+            "relationshipName": "plantCommonName",
+            "otherEntityName": "plantCommonName",
+            "otherEntityField": "id",
+            "ownerSide": true
         }
     ],
     "changelogDate": "20190110200908",
@@ -101,7 +107,7 @@
     "dto": "no",
     "pagination": "no",
     "service": "serviceImpl",
-    "jpaMetamodelFiltering": false,
+    "jpaMetamodelFiltering": true,
     "fluentMethods": true,
     "clientRootFolder": "backend",
     "applications": "*",

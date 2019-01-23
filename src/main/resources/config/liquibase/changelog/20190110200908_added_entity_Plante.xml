@@ -38,12 +38,14 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="common_name" type="varchar(255)">
+            <column name="description" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+
             <column name="classification_cronquist_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_plante_classification_cronquist_id" />
+                <constraints nullable="false" />
             </column>
+
             <column name="strate_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -74,6 +76,17 @@
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
+        
+        <createTable tableName="plante_plant_common_name">
+            <column name="plant_common_names_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="plantes_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="plantes_id, plant_common_names_id" tableName="plante_plant_common_name"/>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->

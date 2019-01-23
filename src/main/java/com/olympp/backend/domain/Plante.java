@@ -43,13 +43,8 @@ public class Plante implements Serializable {
     @Column(name = "temp_max")
     private Integer tempMax;
 
-    @Column(name = "common_name")
-    private String commonName;
-
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties("")
-    private ClassificationCronquist classificationCronquist;
+    @Column(name = "description")
+    private String description;
 
     @OneToMany(mappedBy = "plante")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -57,6 +52,11 @@ public class Plante implements Serializable {
     @OneToMany(mappedBy = "plante")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Floraison> floraisons = new HashSet<>();
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties("")
+    private ClassificationCronquist classificationCronquist;
+
     @ManyToOne
     @JsonIgnoreProperties("")
     private Strate strate;
@@ -85,21 +85,33 @@ public class Plante implements Serializable {
     @JsonIgnoreProperties("")
     private TypeRacine typeRacine;
 
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "plante_plant_common_name",
+               joinColumns = @JoinColumn(name = "plantes_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "plant_common_names_id", referencedColumnName = "id"))
+    private Set<PlantCommonName> plantCommonNames = new HashSet<>();
+    
+	public Plante() {
+		super();
+	}
+
 	public Plante(@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMin,
 			@Pattern(regexp = "^\\d{0,1}(,\\d){0,1}$") String phMax, Integer tempMin, Integer tempMax,
-			String commonName, @NotNull ClassificationCronquist classificationCronquist, Set<Recolte> recoltes,
-			Set<Floraison> floraisons, Strate strate, VitesseCroissance vitesseCroissance,
-			Ensoleillement ensoleillement, RichesseSol richesseSol, TypeTerre typeTerre, TypeFeuillage typeFeuillage,
-			TypeRacine typeRacine) {
+			String description, Set<Recolte> recoltes, Set<Floraison> floraisons,
+			@NotNull ClassificationCronquist classificationCronquist, Strate strate,
+			VitesseCroissance vitesseCroissance, Ensoleillement ensoleillement, RichesseSol richesseSol,
+			TypeTerre typeTerre, TypeFeuillage typeFeuillage, TypeRacine typeRacine,
+			Set<PlantCommonName> plantCommonNames) {
 		super();
 		this.phMin = phMin;
 		this.phMax = phMax;
 		this.tempMin = tempMin;
 		this.tempMax = tempMax;
-		this.commonName = commonName;
-		this.classificationCronquist = classificationCronquist;
+		this.description = description;
 		this.recoltes = recoltes;
 		this.floraisons = floraisons;
+		this.classificationCronquist = classificationCronquist;
 		this.strate = strate;
 		this.vitesseCroissance = vitesseCroissance;
 		this.ensoleillement = ensoleillement;
@@ -107,10 +119,7 @@ public class Plante implements Serializable {
 		this.typeTerre = typeTerre;
 		this.typeFeuillage = typeFeuillage;
 		this.typeRacine = typeRacine;
-	}
-
-	public Plante() {
-		super();
+		this.plantCommonNames = plantCommonNames;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -174,30 +183,17 @@ public class Plante implements Serializable {
         this.tempMax = tempMax;
     }
 
-    public String getCommonName() {
-        return commonName;
+    public String getDescription() {
+        return description;
     }
 
-    public Plante commonName(String commonName) {
-        this.commonName = commonName;
+    public Plante description(String description) {
+        this.description = description;
         return this;
     }
 
-    public void setCommonName(String commonName) {
-        this.commonName = commonName;
-    }
-
-    public ClassificationCronquist getClassificationCronquist() {
-        return classificationCronquist;
-    }
-
-    public Plante classificationCronquist(ClassificationCronquist classificationCronquist) {
-        this.classificationCronquist = classificationCronquist;
-        return this;
-    }
-
-    public void setClassificationCronquist(ClassificationCronquist classificationCronquist) {
-        this.classificationCronquist = classificationCronquist;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<Recolte> getRecoltes() {
@@ -248,6 +244,19 @@ public class Plante implements Serializable {
 
     public void setFloraisons(Set<Floraison> floraisons) {
         this.floraisons = floraisons;
+    }
+
+    public ClassificationCronquist getClassificationCronquist() {
+        return classificationCronquist;
+    }
+
+    public Plante classificationCronquist(ClassificationCronquist classificationCronquist) {
+        this.classificationCronquist = classificationCronquist;
+        return this;
+    }
+
+    public void setClassificationCronquist(ClassificationCronquist classificationCronquist) {
+        this.classificationCronquist = classificationCronquist;
     }
 
     public Strate getStrate() {
@@ -340,6 +349,31 @@ public class Plante implements Serializable {
     public void setTypeRacine(TypeRacine typeRacine) {
         this.typeRacine = typeRacine;
     }
+
+    public Set<PlantCommonName> getPlantCommonNames() {
+        return plantCommonNames;
+    }
+
+    public Plante plantCommonNames(Set<PlantCommonName> plantCommonNames) {
+        this.plantCommonNames = plantCommonNames;
+        return this;
+    }
+
+    public Plante addPlantCommonName(PlantCommonName plantCommonName) {
+        this.plantCommonNames.add(plantCommonName);
+        plantCommonName.getPlantes().add(this);
+        return this;
+    }
+
+    public Plante removePlantCommonName(PlantCommonName plantCommonName) {
+        this.plantCommonNames.remove(plantCommonName);
+        plantCommonName.getPlantes().remove(this);
+        return this;
+    }
+
+    public void setPlantCommonNames(Set<PlantCommonName> plantCommonNames) {
+        this.plantCommonNames = plantCommonNames;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -370,7 +404,7 @@ public class Plante implements Serializable {
             ", phMax='" + getPhMax() + "'" +
             ", tempMin=" + getTempMin() +
             ", tempMax=" + getTempMax() +
-            ", commonName='" + getCommonName() + "'" +
+            ", description='" + getDescription() + "'" +
             "}";
     }
 }

@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Strate;
 import com.olympp.backend.service.StrateService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.StrateCriteria;
+import com.olympp.backend.service.StrateQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class StrateResource {
 
     private final StrateService strateService;
 
-    public StrateResource(StrateService strateService) {
+    private final StrateQueryService strateQueryService;
+
+    public StrateResource(StrateService strateService, StrateQueryService strateQueryService) {
         this.strateService = strateService;
+        this.strateQueryService = strateQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class StrateResource {
         log.debug("REST request to save Strate : {}", strate);
         if (strate.getId() != null) {
             throw new BadRequestAlertException("A new strate cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Strate> fetchedStrate = strateService.findOneByStrate(strate.getStrate());
-        if (fetchedStrate.isPresent() == true) {
-            throw new BadRequestAlertException("A strate already have this name", ENTITY_NAME, "strateexists");
         }
         Strate result = strateService.save(strate);
         return ResponseEntity.created(new URI("/api/strates/" + result.getId()))
@@ -83,13 +84,28 @@ public class StrateResource {
     /**
      * GET  /strates : get all the strates.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of strates in body
      */
     @GetMapping("/strates")
     @Timed
-    public List<Strate> getAllStrates() {
-        log.debug("REST request to get all Strates");
-        return strateService.findAll();
+    public ResponseEntity<List<Strate>> getAllStrates(StrateCriteria criteria) {
+        log.debug("REST request to get Strates by criteria: {}", criteria);
+        List<Strate> entityList = strateQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /strates/count : count all the strates.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/strates/count")
+    @Timed
+    public ResponseEntity<Long> countStrates(StrateCriteria criteria) {
+        log.debug("REST request to count Strates by criteria: {}", criteria);
+        return ResponseEntity.ok().body(strateQueryService.countByCriteria(criteria));
     }
 
     /**

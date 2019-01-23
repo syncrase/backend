@@ -22,17 +22,16 @@ public class TypeTerre implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type_terre", unique = true)
+    @Column(name = "type_terre")
     private String typeTerre;
-
-    public TypeTerre(String typeTerre) {
-		super();
-		this.typeTerre = typeTerre;
-	}
 
 	public TypeTerre() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public TypeTerre(String typeTerre) {
+		super();
+		this.typeTerre = typeTerre;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface FloraisonRepository extends JpaRepository<Floraison, Long> {
+public interface FloraisonRepository extends JpaRepository<Floraison, Long>, JpaSpecificationExecutor<Floraison> {
 
 }

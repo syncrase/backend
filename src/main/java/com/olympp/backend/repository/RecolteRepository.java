@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RecolteRepository extends JpaRepository<Recolte, Long> {
+public interface RecolteRepository extends JpaRepository<Recolte, Long>, JpaSpecificationExecutor<Recolte> {
 
 }

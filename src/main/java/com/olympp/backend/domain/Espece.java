@@ -22,24 +22,24 @@ public class Espece implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@Column(name = "name", unique = true)
-	private String name;
+    @Column(name = "name")
+    private String name;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
+    public Espece() {
+		super();
+	}
 
-    public Espece(String name) {
+	public Espece(String name) {
 		super();
 		this.name = name;
 	}
 
-	public Espece() {
-		super();
-	}
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

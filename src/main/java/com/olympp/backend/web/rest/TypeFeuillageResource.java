@@ -5,6 +5,8 @@ import com.olympp.backend.domain.TypeFeuillage;
 import com.olympp.backend.service.TypeFeuillageService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.TypeFeuillageCriteria;
+import com.olympp.backend.service.TypeFeuillageQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class TypeFeuillageResource {
 
     private final TypeFeuillageService typeFeuillageService;
 
-    public TypeFeuillageResource(TypeFeuillageService typeFeuillageService) {
+    private final TypeFeuillageQueryService typeFeuillageQueryService;
+
+    public TypeFeuillageResource(TypeFeuillageService typeFeuillageService, TypeFeuillageQueryService typeFeuillageQueryService) {
         this.typeFeuillageService = typeFeuillageService;
+        this.typeFeuillageQueryService = typeFeuillageQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class TypeFeuillageResource {
         log.debug("REST request to save TypeFeuillage : {}", typeFeuillage);
         if (typeFeuillage.getId() != null) {
             throw new BadRequestAlertException("A new typeFeuillage cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<TypeFeuillage> fetchedTypeFeuillage = typeFeuillageService.findOneByTypeFeuillage(typeFeuillage.getTypeFeuillage());
-        if (fetchedTypeFeuillage.isPresent() == true) {
-            throw new BadRequestAlertException("This typeFeuillage already exists", ENTITY_NAME, "typefeuillageexists");
         }
         TypeFeuillage result = typeFeuillageService.save(typeFeuillage);
         return ResponseEntity.created(new URI("/api/type-feuillages/" + result.getId()))
@@ -83,13 +84,28 @@ public class TypeFeuillageResource {
     /**
      * GET  /type-feuillages : get all the typeFeuillages.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of typeFeuillages in body
      */
     @GetMapping("/type-feuillages")
     @Timed
-    public List<TypeFeuillage> getAllTypeFeuillages() {
-        log.debug("REST request to get all TypeFeuillages");
-        return typeFeuillageService.findAll();
+    public ResponseEntity<List<TypeFeuillage>> getAllTypeFeuillages(TypeFeuillageCriteria criteria) {
+        log.debug("REST request to get TypeFeuillages by criteria: {}", criteria);
+        List<TypeFeuillage> entityList = typeFeuillageQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /type-feuillages/count : count all the typeFeuillages.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/type-feuillages/count")
+    @Timed
+    public ResponseEntity<Long> countTypeFeuillages(TypeFeuillageCriteria criteria) {
+        log.debug("REST request to count TypeFeuillages by criteria: {}", criteria);
+        return ResponseEntity.ok().body(typeFeuillageQueryService.countByCriteria(criteria));
     }
 
     /**

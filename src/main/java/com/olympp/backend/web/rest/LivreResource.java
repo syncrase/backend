@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Livre;
 import com.olympp.backend.service.LivreService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.LivreCriteria;
+import com.olympp.backend.service.LivreQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,11 @@ public class LivreResource {
 
     private final LivreService livreService;
 
-    public LivreResource(LivreService livreService) {
+    private final LivreQueryService livreQueryService;
+
+    public LivreResource(LivreService livreService, LivreQueryService livreQueryService) {
         this.livreService = livreService;
+        this.livreQueryService = livreQueryService;
     }
 
     /**
@@ -80,18 +85,28 @@ public class LivreResource {
     /**
      * GET  /livres : get all the livres.
      *
-     * @param filter the filter of the request
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of livres in body
      */
     @GetMapping("/livres")
     @Timed
-    public List<Livre> getAllLivres(@RequestParam(required = false) String filter) {
-        if ("reference-is-null".equals(filter)) {
-            log.debug("REST request to get all Livres where reference is null");
-            return livreService.findAllWhereReferenceIsNull();
-        }
-        log.debug("REST request to get all Livres");
-        return livreService.findAll();
+    public ResponseEntity<List<Livre>> getAllLivres(LivreCriteria criteria) {
+        log.debug("REST request to get Livres by criteria: {}", criteria);
+        List<Livre> entityList = livreQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /livres/count : count all the livres.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/livres/count")
+    @Timed
+    public ResponseEntity<Long> countLivres(LivreCriteria criteria) {
+        log.debug("REST request to count Livres by criteria: {}", criteria);
+        return ResponseEntity.ok().body(livreQueryService.countByCriteria(criteria));
     }
 
     /**

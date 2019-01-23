@@ -1,9 +1,6 @@
 package com.olympp.backend.repository;
 
 import com.olympp.backend.domain.Mois;
-
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface MoisRepository extends JpaRepository<Mois, Long> {
-
-	Optional<Mois> findByMois(String mois);
+public interface MoisRepository extends JpaRepository<Mois, Long>, JpaSpecificationExecutor<Mois> {
 
 }

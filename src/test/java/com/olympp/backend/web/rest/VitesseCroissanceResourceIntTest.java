@@ -6,6 +6,8 @@ import com.olympp.backend.domain.VitesseCroissance;
 import com.olympp.backend.repository.VitesseCroissanceRepository;
 import com.olympp.backend.service.VitesseCroissanceService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.VitesseCroissanceCriteria;
+import com.olympp.backend.service.VitesseCroissanceQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class VitesseCroissanceResourceIntTest {
     private VitesseCroissanceService vitesseCroissanceService;
 
     @Autowired
+    private VitesseCroissanceQueryService vitesseCroissanceQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class VitesseCroissanceResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final VitesseCroissanceResource vitesseCroissanceResource = new VitesseCroissanceResource(vitesseCroissanceService);
+        final VitesseCroissanceResource vitesseCroissanceResource = new VitesseCroissanceResource(vitesseCroissanceService, vitesseCroissanceQueryService);
         this.restVitesseCroissanceMockMvc = MockMvcBuilders.standaloneSetup(vitesseCroissanceResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class VitesseCroissanceResourceIntTest {
             .andExpect(jsonPath("$.id").value(vitesseCroissance.getId().intValue()))
             .andExpect(jsonPath("$.vitesseCroissance").value(DEFAULT_VITESSE_CROISSANCE.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllVitesseCroissancesByVitesseCroissanceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        vitesseCroissanceRepository.saveAndFlush(vitesseCroissance);
+
+        // Get all the vitesseCroissanceList where vitesseCroissance equals to DEFAULT_VITESSE_CROISSANCE
+        defaultVitesseCroissanceShouldBeFound("vitesseCroissance.equals=" + DEFAULT_VITESSE_CROISSANCE);
+
+        // Get all the vitesseCroissanceList where vitesseCroissance equals to UPDATED_VITESSE_CROISSANCE
+        defaultVitesseCroissanceShouldNotBeFound("vitesseCroissance.equals=" + UPDATED_VITESSE_CROISSANCE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVitesseCroissancesByVitesseCroissanceIsInShouldWork() throws Exception {
+        // Initialize the database
+        vitesseCroissanceRepository.saveAndFlush(vitesseCroissance);
+
+        // Get all the vitesseCroissanceList where vitesseCroissance in DEFAULT_VITESSE_CROISSANCE or UPDATED_VITESSE_CROISSANCE
+        defaultVitesseCroissanceShouldBeFound("vitesseCroissance.in=" + DEFAULT_VITESSE_CROISSANCE + "," + UPDATED_VITESSE_CROISSANCE);
+
+        // Get all the vitesseCroissanceList where vitesseCroissance equals to UPDATED_VITESSE_CROISSANCE
+        defaultVitesseCroissanceShouldNotBeFound("vitesseCroissance.in=" + UPDATED_VITESSE_CROISSANCE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllVitesseCroissancesByVitesseCroissanceIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        vitesseCroissanceRepository.saveAndFlush(vitesseCroissance);
+
+        // Get all the vitesseCroissanceList where vitesseCroissance is not null
+        defaultVitesseCroissanceShouldBeFound("vitesseCroissance.specified=true");
+
+        // Get all the vitesseCroissanceList where vitesseCroissance is null
+        defaultVitesseCroissanceShouldNotBeFound("vitesseCroissance.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultVitesseCroissanceShouldBeFound(String filter) throws Exception {
+        restVitesseCroissanceMockMvc.perform(get("/api/vitesse-croissances?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(vitesseCroissance.getId().intValue())))
+            .andExpect(jsonPath("$.[*].vitesseCroissance").value(hasItem(DEFAULT_VITESSE_CROISSANCE.toString())));
+
+        // Check, that the count call also returns 1
+        restVitesseCroissanceMockMvc.perform(get("/api/vitesse-croissances/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultVitesseCroissanceShouldNotBeFound(String filter) throws Exception {
+        restVitesseCroissanceMockMvc.perform(get("/api/vitesse-croissances?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restVitesseCroissanceMockMvc.perform(get("/api/vitesse-croissances/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

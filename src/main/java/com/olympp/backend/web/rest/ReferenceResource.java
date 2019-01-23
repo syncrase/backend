@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Reference;
 import com.olympp.backend.service.ReferenceService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.ReferenceCriteria;
+import com.olympp.backend.service.ReferenceQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class ReferenceResource {
 
     private final ReferenceService referenceService;
 
-    public ReferenceResource(ReferenceService referenceService) {
+    private final ReferenceQueryService referenceQueryService;
+
+    public ReferenceResource(ReferenceService referenceService, ReferenceQueryService referenceQueryService) {
         this.referenceService = referenceService;
+        this.referenceQueryService = referenceQueryService;
     }
 
     /**
@@ -79,13 +84,28 @@ public class ReferenceResource {
     /**
      * GET  /references : get all the references.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of references in body
      */
     @GetMapping("/references")
     @Timed
-    public List<Reference> getAllReferences() {
-        log.debug("REST request to get all References");
-        return referenceService.findAll();
+    public ResponseEntity<List<Reference>> getAllReferences(ReferenceCriteria criteria) {
+        log.debug("REST request to get References by criteria: {}", criteria);
+        List<Reference> entityList = referenceQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /references/count : count all the references.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/references/count")
+    @Timed
+    public ResponseEntity<Long> countReferences(ReferenceCriteria criteria) {
+        log.debug("REST request to count References by criteria: {}", criteria);
+        return ResponseEntity.ok().body(referenceQueryService.countByCriteria(criteria));
     }
 
     /**

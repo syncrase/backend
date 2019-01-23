@@ -6,6 +6,8 @@ import com.olympp.backend.domain.TypeTerre;
 import com.olympp.backend.repository.TypeTerreRepository;
 import com.olympp.backend.service.TypeTerreService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.TypeTerreCriteria;
+import com.olympp.backend.service.TypeTerreQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class TypeTerreResourceIntTest {
     private TypeTerreService typeTerreService;
 
     @Autowired
+    private TypeTerreQueryService typeTerreQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class TypeTerreResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TypeTerreResource typeTerreResource = new TypeTerreResource(typeTerreService);
+        final TypeTerreResource typeTerreResource = new TypeTerreResource(typeTerreService, typeTerreQueryService);
         this.restTypeTerreMockMvc = MockMvcBuilders.standaloneSetup(typeTerreResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class TypeTerreResourceIntTest {
             .andExpect(jsonPath("$.id").value(typeTerre.getId().intValue()))
             .andExpect(jsonPath("$.typeTerre").value(DEFAULT_TYPE_TERRE.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllTypeTerresByTypeTerreIsEqualToSomething() throws Exception {
+        // Initialize the database
+        typeTerreRepository.saveAndFlush(typeTerre);
+
+        // Get all the typeTerreList where typeTerre equals to DEFAULT_TYPE_TERRE
+        defaultTypeTerreShouldBeFound("typeTerre.equals=" + DEFAULT_TYPE_TERRE);
+
+        // Get all the typeTerreList where typeTerre equals to UPDATED_TYPE_TERRE
+        defaultTypeTerreShouldNotBeFound("typeTerre.equals=" + UPDATED_TYPE_TERRE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeTerresByTypeTerreIsInShouldWork() throws Exception {
+        // Initialize the database
+        typeTerreRepository.saveAndFlush(typeTerre);
+
+        // Get all the typeTerreList where typeTerre in DEFAULT_TYPE_TERRE or UPDATED_TYPE_TERRE
+        defaultTypeTerreShouldBeFound("typeTerre.in=" + DEFAULT_TYPE_TERRE + "," + UPDATED_TYPE_TERRE);
+
+        // Get all the typeTerreList where typeTerre equals to UPDATED_TYPE_TERRE
+        defaultTypeTerreShouldNotBeFound("typeTerre.in=" + UPDATED_TYPE_TERRE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeTerresByTypeTerreIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        typeTerreRepository.saveAndFlush(typeTerre);
+
+        // Get all the typeTerreList where typeTerre is not null
+        defaultTypeTerreShouldBeFound("typeTerre.specified=true");
+
+        // Get all the typeTerreList where typeTerre is null
+        defaultTypeTerreShouldNotBeFound("typeTerre.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultTypeTerreShouldBeFound(String filter) throws Exception {
+        restTypeTerreMockMvc.perform(get("/api/type-terres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(typeTerre.getId().intValue())))
+            .andExpect(jsonPath("$.[*].typeTerre").value(hasItem(DEFAULT_TYPE_TERRE.toString())));
+
+        // Check, that the count call also returns 1
+        restTypeTerreMockMvc.perform(get("/api/type-terres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultTypeTerreShouldNotBeFound(String filter) throws Exception {
+        restTypeTerreMockMvc.perform(get("/api/type-terres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restTypeTerreMockMvc.perform(get("/api/type-terres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

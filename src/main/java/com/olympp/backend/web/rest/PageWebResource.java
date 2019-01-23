@@ -5,6 +5,8 @@ import com.olympp.backend.domain.PageWeb;
 import com.olympp.backend.service.PageWebService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.PageWebCriteria;
+import com.olympp.backend.service.PageWebQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,11 @@ public class PageWebResource {
 
     private final PageWebService pageWebService;
 
-    public PageWebResource(PageWebService pageWebService) {
+    private final PageWebQueryService pageWebQueryService;
+
+    public PageWebResource(PageWebService pageWebService, PageWebQueryService pageWebQueryService) {
         this.pageWebService = pageWebService;
+        this.pageWebQueryService = pageWebQueryService;
     }
 
     /**
@@ -80,18 +85,28 @@ public class PageWebResource {
     /**
      * GET  /page-webs : get all the pageWebs.
      *
-     * @param filter the filter of the request
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of pageWebs in body
      */
     @GetMapping("/page-webs")
     @Timed
-    public List<PageWeb> getAllPageWebs(@RequestParam(required = false) String filter) {
-        if ("reference-is-null".equals(filter)) {
-            log.debug("REST request to get all PageWebs where reference is null");
-            return pageWebService.findAllWhereReferenceIsNull();
-        }
-        log.debug("REST request to get all PageWebs");
-        return pageWebService.findAll();
+    public ResponseEntity<List<PageWeb>> getAllPageWebs(PageWebCriteria criteria) {
+        log.debug("REST request to get PageWebs by criteria: {}", criteria);
+        List<PageWeb> entityList = pageWebQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /page-webs/count : count all the pageWebs.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/page-webs/count")
+    @Timed
+    public ResponseEntity<Long> countPageWebs(PageWebCriteria criteria) {
+        log.debug("REST request to count PageWebs by criteria: {}", criteria);
+        return ResponseEntity.ok().body(pageWebQueryService.countByCriteria(criteria));
     }
 
     /**

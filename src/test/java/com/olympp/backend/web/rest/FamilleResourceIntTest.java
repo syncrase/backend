@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Famille;
 import com.olympp.backend.repository.FamilleRepository;
 import com.olympp.backend.service.FamilleService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.FamilleCriteria;
+import com.olympp.backend.service.FamilleQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class FamilleResourceIntTest {
     private FamilleService familleService;
 
     @Autowired
+    private FamilleQueryService familleQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class FamilleResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FamilleResource familleResource = new FamilleResource(familleService);
+        final FamilleResource familleResource = new FamilleResource(familleService, familleQueryService);
         this.restFamilleMockMvc = MockMvcBuilders.standaloneSetup(familleResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class FamilleResourceIntTest {
             .andExpect(jsonPath("$.id").value(famille.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllFamillesByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        familleRepository.saveAndFlush(famille);
+
+        // Get all the familleList where name equals to DEFAULT_NAME
+        defaultFamilleShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the familleList where name equals to UPDATED_NAME
+        defaultFamilleShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllFamillesByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        familleRepository.saveAndFlush(famille);
+
+        // Get all the familleList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultFamilleShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the familleList where name equals to UPDATED_NAME
+        defaultFamilleShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllFamillesByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        familleRepository.saveAndFlush(famille);
+
+        // Get all the familleList where name is not null
+        defaultFamilleShouldBeFound("name.specified=true");
+
+        // Get all the familleList where name is null
+        defaultFamilleShouldNotBeFound("name.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultFamilleShouldBeFound(String filter) throws Exception {
+        restFamilleMockMvc.perform(get("/api/familles?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(famille.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+
+        // Check, that the count call also returns 1
+        restFamilleMockMvc.perform(get("/api/familles/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultFamilleShouldNotBeFound(String filter) throws Exception {
+        restFamilleMockMvc.perform(get("/api/familles?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restFamilleMockMvc.perform(get("/api/familles/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

@@ -40,6 +40,4 @@ public interface OrdreService {
      * @param id the id of the entity
      */
     void delete(Long id);
-
-	Optional<Ordre> findOneByName(String name);
 }

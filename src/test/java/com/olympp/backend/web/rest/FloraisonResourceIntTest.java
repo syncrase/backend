@@ -3,9 +3,13 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Floraison;
+import com.olympp.backend.domain.Plante;
+import com.olympp.backend.domain.Mois;
 import com.olympp.backend.repository.FloraisonRepository;
 import com.olympp.backend.service.FloraisonService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.FloraisonCriteria;
+import com.olympp.backend.service.FloraisonQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +52,9 @@ public class FloraisonResourceIntTest {
     private FloraisonService floraisonService;
 
     @Autowired
+    private FloraisonQueryService floraisonQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -69,7 +76,7 @@ public class FloraisonResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FloraisonResource floraisonResource = new FloraisonResource(floraisonService);
+        final FloraisonResource floraisonResource = new FloraisonResource(floraisonService, floraisonQueryService);
         this.restFloraisonMockMvc = MockMvcBuilders.standaloneSetup(floraisonResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -155,6 +162,77 @@ public class FloraisonResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(floraison.getId().intValue()));
     }
+
+    @Test
+    @Transactional
+    public void getAllFloraisonsByPlanteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Plante plante = PlanteResourceIntTest.createEntity(em);
+        em.persist(plante);
+        em.flush();
+        floraison.setPlante(plante);
+        floraisonRepository.saveAndFlush(floraison);
+        Long planteId = plante.getId();
+
+        // Get all the floraisonList where plante equals to planteId
+        defaultFloraisonShouldBeFound("planteId.equals=" + planteId);
+
+        // Get all the floraisonList where plante equals to planteId + 1
+        defaultFloraisonShouldNotBeFound("planteId.equals=" + (planteId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllFloraisonsByMoisIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Mois mois = MoisResourceIntTest.createEntity(em);
+        em.persist(mois);
+        em.flush();
+        floraison.setMois(mois);
+        floraisonRepository.saveAndFlush(floraison);
+        Long moisId = mois.getId();
+
+        // Get all the floraisonList where mois equals to moisId
+        defaultFloraisonShouldBeFound("moisId.equals=" + moisId);
+
+        // Get all the floraisonList where mois equals to moisId + 1
+        defaultFloraisonShouldNotBeFound("moisId.equals=" + (moisId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultFloraisonShouldBeFound(String filter) throws Exception {
+        restFloraisonMockMvc.perform(get("/api/floraisons?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(floraison.getId().intValue())));
+
+        // Check, that the count call also returns 1
+        restFloraisonMockMvc.perform(get("/api/floraisons/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultFloraisonShouldNotBeFound(String filter) throws Exception {
+        restFloraisonMockMvc.perform(get("/api/floraisons?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restFloraisonMockMvc.perform(get("/api/floraisons/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

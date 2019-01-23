@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Recolte;
 import com.olympp.backend.service.RecolteService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.RecolteCriteria;
+import com.olympp.backend.service.RecolteQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class RecolteResource {
 
     private final RecolteService recolteService;
 
-    public RecolteResource(RecolteService recolteService) {
+    private final RecolteQueryService recolteQueryService;
+
+    public RecolteResource(RecolteService recolteService, RecolteQueryService recolteQueryService) {
         this.recolteService = recolteService;
+        this.recolteQueryService = recolteQueryService;
     }
 
     /**
@@ -79,13 +84,28 @@ public class RecolteResource {
     /**
      * GET  /recoltes : get all the recoltes.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of recoltes in body
      */
     @GetMapping("/recoltes")
     @Timed
-    public List<Recolte> getAllRecoltes() {
-        log.debug("REST request to get all Recoltes");
-        return recolteService.findAll();
+    public ResponseEntity<List<Recolte>> getAllRecoltes(RecolteCriteria criteria) {
+        log.debug("REST request to get Recoltes by criteria: {}", criteria);
+        List<Recolte> entityList = recolteQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /recoltes/count : count all the recoltes.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/recoltes/count")
+    @Timed
+    public ResponseEntity<Long> countRecoltes(RecolteCriteria criteria) {
+        log.debug("REST request to count Recoltes by criteria: {}", criteria);
+        return ResponseEntity.ok().body(recolteQueryService.countByCriteria(criteria));
     }
 
     /**

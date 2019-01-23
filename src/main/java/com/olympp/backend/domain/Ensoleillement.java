@@ -22,18 +22,19 @@ public class Ensoleillement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ensoleillement", unique = true)
+    @Column(name = "ensoleillement")
     private String ensoleillement;
-
-    public Ensoleillement(String ensoleillement) {
-		this.ensoleillement = ensoleillement;
-	}
 
 	public Ensoleillement() {
 		super();
 	}
-	
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+	public Ensoleillement(String ensoleillement) {
+		super();
+		this.ensoleillement = ensoleillement;
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

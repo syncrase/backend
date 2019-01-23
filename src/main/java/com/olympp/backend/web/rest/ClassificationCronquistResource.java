@@ -5,6 +5,8 @@ import com.olympp.backend.domain.ClassificationCronquist;
 import com.olympp.backend.service.ClassificationCronquistService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.ClassificationCronquistCriteria;
+import com.olympp.backend.service.ClassificationCronquistQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,11 @@ public class ClassificationCronquistResource {
 
     private final ClassificationCronquistService classificationCronquistService;
 
-    public ClassificationCronquistResource(ClassificationCronquistService classificationCronquistService) {
+    private final ClassificationCronquistQueryService classificationCronquistQueryService;
+
+    public ClassificationCronquistResource(ClassificationCronquistService classificationCronquistService, ClassificationCronquistQueryService classificationCronquistQueryService) {
         this.classificationCronquistService = classificationCronquistService;
+        this.classificationCronquistQueryService = classificationCronquistQueryService;
     }
 
     /**
@@ -80,13 +85,28 @@ public class ClassificationCronquistResource {
     /**
      * GET  /classification-cronquists : get all the classificationCronquists.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of classificationCronquists in body
      */
     @GetMapping("/classification-cronquists")
     @Timed
-    public List<ClassificationCronquist> getAllClassificationCronquists() {
-        log.debug("REST request to get all ClassificationCronquists");
-        return classificationCronquistService.findAll();
+    public ResponseEntity<List<ClassificationCronquist>> getAllClassificationCronquists(ClassificationCronquistCriteria criteria) {
+        log.debug("REST request to get ClassificationCronquists by criteria: {}", criteria);
+        List<ClassificationCronquist> entityList = classificationCronquistQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /classification-cronquists/count : count all the classificationCronquists.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/classification-cronquists/count")
+    @Timed
+    public ResponseEntity<Long> countClassificationCronquists(ClassificationCronquistCriteria criteria) {
+        log.debug("REST request to count ClassificationCronquists by criteria: {}", criteria);
+        return ResponseEntity.ok().body(classificationCronquistQueryService.countByCriteria(criteria));
     }
 
     /**

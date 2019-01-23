@@ -3,17 +3,32 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Plante;
+import com.olympp.backend.domain.Recolte;
+import com.olympp.backend.domain.Floraison;
 import com.olympp.backend.domain.ClassificationCronquist;
+import com.olympp.backend.domain.Strate;
+import com.olympp.backend.domain.VitesseCroissance;
+import com.olympp.backend.domain.Ensoleillement;
+import com.olympp.backend.domain.RichesseSol;
+import com.olympp.backend.domain.TypeTerre;
+import com.olympp.backend.domain.TypeFeuillage;
+import com.olympp.backend.domain.TypeRacine;
+import com.olympp.backend.domain.PlantCommonName;
 import com.olympp.backend.repository.PlanteRepository;
 import com.olympp.backend.service.PlanteService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.PlanteCriteria;
+import com.olympp.backend.service.PlanteQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -24,12 +39,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 
 import static com.olympp.backend.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -54,14 +71,23 @@ public class PlanteResourceIntTest {
     private static final Integer DEFAULT_TEMP_MAX = 1;
     private static final Integer UPDATED_TEMP_MAX = 2;
 
-    private static final String DEFAULT_COMMON_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_COMMON_NAME = "BBBBBBBBBB";
+    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
     @Autowired
     private PlanteRepository planteRepository;
 
+    @Mock
+    private PlanteRepository planteRepositoryMock;
+
+    @Mock
+    private PlanteService planteServiceMock;
+
     @Autowired
     private PlanteService planteService;
+
+    @Autowired
+    private PlanteQueryService planteQueryService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -85,7 +111,7 @@ public class PlanteResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PlanteResource planteResource = new PlanteResource(planteService);
+        final PlanteResource planteResource = new PlanteResource(planteService, planteQueryService);
         this.restPlanteMockMvc = MockMvcBuilders.standaloneSetup(planteResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -106,7 +132,7 @@ public class PlanteResourceIntTest {
             .phMax(DEFAULT_PH_MAX)
             .tempMin(DEFAULT_TEMP_MIN)
             .tempMax(DEFAULT_TEMP_MAX)
-            .commonName(DEFAULT_COMMON_NAME);
+            .description(DEFAULT_DESCRIPTION);
         // Add required entity
         ClassificationCronquist classificationCronquist = ClassificationCronquistResourceIntTest.createEntity(em);
         em.persist(classificationCronquist);
@@ -139,7 +165,7 @@ public class PlanteResourceIntTest {
         assertThat(testPlante.getPhMax()).isEqualTo(DEFAULT_PH_MAX);
         assertThat(testPlante.getTempMin()).isEqualTo(DEFAULT_TEMP_MIN);
         assertThat(testPlante.getTempMax()).isEqualTo(DEFAULT_TEMP_MAX);
-        assertThat(testPlante.getCommonName()).isEqualTo(DEFAULT_COMMON_NAME);
+        assertThat(testPlante.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
     @Test
@@ -176,9 +202,42 @@ public class PlanteResourceIntTest {
             .andExpect(jsonPath("$.[*].phMax").value(hasItem(DEFAULT_PH_MAX.toString())))
             .andExpect(jsonPath("$.[*].tempMin").value(hasItem(DEFAULT_TEMP_MIN)))
             .andExpect(jsonPath("$.[*].tempMax").value(hasItem(DEFAULT_TEMP_MAX)))
-            .andExpect(jsonPath("$.[*].commonName").value(hasItem(DEFAULT_COMMON_NAME.toString())));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
     
+    @SuppressWarnings({"unchecked"})
+    public void getAllPlantesWithEagerRelationshipsIsEnabled() throws Exception {
+        PlanteResource planteResource = new PlanteResource(planteServiceMock, planteQueryService);
+        when(planteServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restPlanteMockMvc = MockMvcBuilders.standaloneSetup(planteResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPlanteMockMvc.perform(get("/api/plantes?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(planteServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void getAllPlantesWithEagerRelationshipsIsNotEnabled() throws Exception {
+        PlanteResource planteResource = new PlanteResource(planteServiceMock, planteQueryService);
+            when(planteServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restPlanteMockMvc = MockMvcBuilders.standaloneSetup(planteResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPlanteMockMvc.perform(get("/api/plantes?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(planteServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     @Transactional
     public void getPlante() throws Exception {
@@ -194,8 +253,504 @@ public class PlanteResourceIntTest {
             .andExpect(jsonPath("$.phMax").value(DEFAULT_PH_MAX.toString()))
             .andExpect(jsonPath("$.tempMin").value(DEFAULT_TEMP_MIN))
             .andExpect(jsonPath("$.tempMax").value(DEFAULT_TEMP_MAX))
-            .andExpect(jsonPath("$.commonName").value(DEFAULT_COMMON_NAME.toString()));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMinIsEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMin equals to DEFAULT_PH_MIN
+        defaultPlanteShouldBeFound("phMin.equals=" + DEFAULT_PH_MIN);
+
+        // Get all the planteList where phMin equals to UPDATED_PH_MIN
+        defaultPlanteShouldNotBeFound("phMin.equals=" + UPDATED_PH_MIN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMinIsInShouldWork() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMin in DEFAULT_PH_MIN or UPDATED_PH_MIN
+        defaultPlanteShouldBeFound("phMin.in=" + DEFAULT_PH_MIN + "," + UPDATED_PH_MIN);
+
+        // Get all the planteList where phMin equals to UPDATED_PH_MIN
+        defaultPlanteShouldNotBeFound("phMin.in=" + UPDATED_PH_MIN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMinIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMin is not null
+        defaultPlanteShouldBeFound("phMin.specified=true");
+
+        // Get all the planteList where phMin is null
+        defaultPlanteShouldNotBeFound("phMin.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMaxIsEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMax equals to DEFAULT_PH_MAX
+        defaultPlanteShouldBeFound("phMax.equals=" + DEFAULT_PH_MAX);
+
+        // Get all the planteList where phMax equals to UPDATED_PH_MAX
+        defaultPlanteShouldNotBeFound("phMax.equals=" + UPDATED_PH_MAX);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMaxIsInShouldWork() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMax in DEFAULT_PH_MAX or UPDATED_PH_MAX
+        defaultPlanteShouldBeFound("phMax.in=" + DEFAULT_PH_MAX + "," + UPDATED_PH_MAX);
+
+        // Get all the planteList where phMax equals to UPDATED_PH_MAX
+        defaultPlanteShouldNotBeFound("phMax.in=" + UPDATED_PH_MAX);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPhMaxIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where phMax is not null
+        defaultPlanteShouldBeFound("phMax.specified=true");
+
+        // Get all the planteList where phMax is null
+        defaultPlanteShouldNotBeFound("phMax.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMinIsEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMin equals to DEFAULT_TEMP_MIN
+        defaultPlanteShouldBeFound("tempMin.equals=" + DEFAULT_TEMP_MIN);
+
+        // Get all the planteList where tempMin equals to UPDATED_TEMP_MIN
+        defaultPlanteShouldNotBeFound("tempMin.equals=" + UPDATED_TEMP_MIN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMinIsInShouldWork() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMin in DEFAULT_TEMP_MIN or UPDATED_TEMP_MIN
+        defaultPlanteShouldBeFound("tempMin.in=" + DEFAULT_TEMP_MIN + "," + UPDATED_TEMP_MIN);
+
+        // Get all the planteList where tempMin equals to UPDATED_TEMP_MIN
+        defaultPlanteShouldNotBeFound("tempMin.in=" + UPDATED_TEMP_MIN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMinIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMin is not null
+        defaultPlanteShouldBeFound("tempMin.specified=true");
+
+        // Get all the planteList where tempMin is null
+        defaultPlanteShouldNotBeFound("tempMin.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMinIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMin greater than or equals to DEFAULT_TEMP_MIN
+        defaultPlanteShouldBeFound("tempMin.greaterOrEqualThan=" + DEFAULT_TEMP_MIN);
+
+        // Get all the planteList where tempMin greater than or equals to UPDATED_TEMP_MIN
+        defaultPlanteShouldNotBeFound("tempMin.greaterOrEqualThan=" + UPDATED_TEMP_MIN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMinIsLessThanSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMin less than or equals to DEFAULT_TEMP_MIN
+        defaultPlanteShouldNotBeFound("tempMin.lessThan=" + DEFAULT_TEMP_MIN);
+
+        // Get all the planteList where tempMin less than or equals to UPDATED_TEMP_MIN
+        defaultPlanteShouldBeFound("tempMin.lessThan=" + UPDATED_TEMP_MIN);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMaxIsEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMax equals to DEFAULT_TEMP_MAX
+        defaultPlanteShouldBeFound("tempMax.equals=" + DEFAULT_TEMP_MAX);
+
+        // Get all the planteList where tempMax equals to UPDATED_TEMP_MAX
+        defaultPlanteShouldNotBeFound("tempMax.equals=" + UPDATED_TEMP_MAX);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMaxIsInShouldWork() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMax in DEFAULT_TEMP_MAX or UPDATED_TEMP_MAX
+        defaultPlanteShouldBeFound("tempMax.in=" + DEFAULT_TEMP_MAX + "," + UPDATED_TEMP_MAX);
+
+        // Get all the planteList where tempMax equals to UPDATED_TEMP_MAX
+        defaultPlanteShouldNotBeFound("tempMax.in=" + UPDATED_TEMP_MAX);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMaxIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMax is not null
+        defaultPlanteShouldBeFound("tempMax.specified=true");
+
+        // Get all the planteList where tempMax is null
+        defaultPlanteShouldNotBeFound("tempMax.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMaxIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMax greater than or equals to DEFAULT_TEMP_MAX
+        defaultPlanteShouldBeFound("tempMax.greaterOrEqualThan=" + DEFAULT_TEMP_MAX);
+
+        // Get all the planteList where tempMax greater than or equals to UPDATED_TEMP_MAX
+        defaultPlanteShouldNotBeFound("tempMax.greaterOrEqualThan=" + UPDATED_TEMP_MAX);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTempMaxIsLessThanSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where tempMax less than or equals to DEFAULT_TEMP_MAX
+        defaultPlanteShouldNotBeFound("tempMax.lessThan=" + DEFAULT_TEMP_MAX);
+
+        // Get all the planteList where tempMax less than or equals to UPDATED_TEMP_MAX
+        defaultPlanteShouldBeFound("tempMax.lessThan=" + UPDATED_TEMP_MAX);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where description equals to DEFAULT_DESCRIPTION
+        defaultPlanteShouldBeFound("description.equals=" + DEFAULT_DESCRIPTION);
+
+        // Get all the planteList where description equals to UPDATED_DESCRIPTION
+        defaultPlanteShouldNotBeFound("description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where description in DEFAULT_DESCRIPTION or UPDATED_DESCRIPTION
+        defaultPlanteShouldBeFound("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION);
+
+        // Get all the planteList where description equals to UPDATED_DESCRIPTION
+        defaultPlanteShouldNotBeFound("description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        planteRepository.saveAndFlush(plante);
+
+        // Get all the planteList where description is not null
+        defaultPlanteShouldBeFound("description.specified=true");
+
+        // Get all the planteList where description is null
+        defaultPlanteShouldNotBeFound("description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlantesByRecolteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Recolte recolte = RecolteResourceIntTest.createEntity(em);
+        em.persist(recolte);
+        em.flush();
+        plante.addRecolte(recolte);
+        planteRepository.saveAndFlush(plante);
+        Long recolteId = recolte.getId();
+
+        // Get all the planteList where recolte equals to recolteId
+        defaultPlanteShouldBeFound("recolteId.equals=" + recolteId);
+
+        // Get all the planteList where recolte equals to recolteId + 1
+        defaultPlanteShouldNotBeFound("recolteId.equals=" + (recolteId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByFloraisonIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Floraison floraison = FloraisonResourceIntTest.createEntity(em);
+        em.persist(floraison);
+        em.flush();
+        plante.addFloraison(floraison);
+        planteRepository.saveAndFlush(plante);
+        Long floraisonId = floraison.getId();
+
+        // Get all the planteList where floraison equals to floraisonId
+        defaultPlanteShouldBeFound("floraisonId.equals=" + floraisonId);
+
+        // Get all the planteList where floraison equals to floraisonId + 1
+        defaultPlanteShouldNotBeFound("floraisonId.equals=" + (floraisonId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByClassificationCronquistIsEqualToSomething() throws Exception {
+        // Initialize the database
+        ClassificationCronquist classificationCronquist = ClassificationCronquistResourceIntTest.createEntity(em);
+        em.persist(classificationCronquist);
+        em.flush();
+        plante.setClassificationCronquist(classificationCronquist);
+        planteRepository.saveAndFlush(plante);
+        Long classificationCronquistId = classificationCronquist.getId();
+
+        // Get all the planteList where classificationCronquist equals to classificationCronquistId
+        defaultPlanteShouldBeFound("classificationCronquistId.equals=" + classificationCronquistId);
+
+        // Get all the planteList where classificationCronquist equals to classificationCronquistId + 1
+        defaultPlanteShouldNotBeFound("classificationCronquistId.equals=" + (classificationCronquistId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByStrateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Strate strate = StrateResourceIntTest.createEntity(em);
+        em.persist(strate);
+        em.flush();
+        plante.setStrate(strate);
+        planteRepository.saveAndFlush(plante);
+        Long strateId = strate.getId();
+
+        // Get all the planteList where strate equals to strateId
+        defaultPlanteShouldBeFound("strateId.equals=" + strateId);
+
+        // Get all the planteList where strate equals to strateId + 1
+        defaultPlanteShouldNotBeFound("strateId.equals=" + (strateId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByVitesseCroissanceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        VitesseCroissance vitesseCroissance = VitesseCroissanceResourceIntTest.createEntity(em);
+        em.persist(vitesseCroissance);
+        em.flush();
+        plante.setVitesseCroissance(vitesseCroissance);
+        planteRepository.saveAndFlush(plante);
+        Long vitesseCroissanceId = vitesseCroissance.getId();
+
+        // Get all the planteList where vitesseCroissance equals to vitesseCroissanceId
+        defaultPlanteShouldBeFound("vitesseCroissanceId.equals=" + vitesseCroissanceId);
+
+        // Get all the planteList where vitesseCroissance equals to vitesseCroissanceId + 1
+        defaultPlanteShouldNotBeFound("vitesseCroissanceId.equals=" + (vitesseCroissanceId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByEnsoleillementIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Ensoleillement ensoleillement = EnsoleillementResourceIntTest.createEntity(em);
+        em.persist(ensoleillement);
+        em.flush();
+        plante.setEnsoleillement(ensoleillement);
+        planteRepository.saveAndFlush(plante);
+        Long ensoleillementId = ensoleillement.getId();
+
+        // Get all the planteList where ensoleillement equals to ensoleillementId
+        defaultPlanteShouldBeFound("ensoleillementId.equals=" + ensoleillementId);
+
+        // Get all the planteList where ensoleillement equals to ensoleillementId + 1
+        defaultPlanteShouldNotBeFound("ensoleillementId.equals=" + (ensoleillementId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByRichesseSolIsEqualToSomething() throws Exception {
+        // Initialize the database
+        RichesseSol richesseSol = RichesseSolResourceIntTest.createEntity(em);
+        em.persist(richesseSol);
+        em.flush();
+        plante.setRichesseSol(richesseSol);
+        planteRepository.saveAndFlush(plante);
+        Long richesseSolId = richesseSol.getId();
+
+        // Get all the planteList where richesseSol equals to richesseSolId
+        defaultPlanteShouldBeFound("richesseSolId.equals=" + richesseSolId);
+
+        // Get all the planteList where richesseSol equals to richesseSolId + 1
+        defaultPlanteShouldNotBeFound("richesseSolId.equals=" + (richesseSolId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTypeTerreIsEqualToSomething() throws Exception {
+        // Initialize the database
+        TypeTerre typeTerre = TypeTerreResourceIntTest.createEntity(em);
+        em.persist(typeTerre);
+        em.flush();
+        plante.setTypeTerre(typeTerre);
+        planteRepository.saveAndFlush(plante);
+        Long typeTerreId = typeTerre.getId();
+
+        // Get all the planteList where typeTerre equals to typeTerreId
+        defaultPlanteShouldBeFound("typeTerreId.equals=" + typeTerreId);
+
+        // Get all the planteList where typeTerre equals to typeTerreId + 1
+        defaultPlanteShouldNotBeFound("typeTerreId.equals=" + (typeTerreId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTypeFeuillageIsEqualToSomething() throws Exception {
+        // Initialize the database
+        TypeFeuillage typeFeuillage = TypeFeuillageResourceIntTest.createEntity(em);
+        em.persist(typeFeuillage);
+        em.flush();
+        plante.setTypeFeuillage(typeFeuillage);
+        planteRepository.saveAndFlush(plante);
+        Long typeFeuillageId = typeFeuillage.getId();
+
+        // Get all the planteList where typeFeuillage equals to typeFeuillageId
+        defaultPlanteShouldBeFound("typeFeuillageId.equals=" + typeFeuillageId);
+
+        // Get all the planteList where typeFeuillage equals to typeFeuillageId + 1
+        defaultPlanteShouldNotBeFound("typeFeuillageId.equals=" + (typeFeuillageId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByTypeRacineIsEqualToSomething() throws Exception {
+        // Initialize the database
+        TypeRacine typeRacine = TypeRacineResourceIntTest.createEntity(em);
+        em.persist(typeRacine);
+        em.flush();
+        plante.setTypeRacine(typeRacine);
+        planteRepository.saveAndFlush(plante);
+        Long typeRacineId = typeRacine.getId();
+
+        // Get all the planteList where typeRacine equals to typeRacineId
+        defaultPlanteShouldBeFound("typeRacineId.equals=" + typeRacineId);
+
+        // Get all the planteList where typeRacine equals to typeRacineId + 1
+        defaultPlanteShouldNotBeFound("typeRacineId.equals=" + (typeRacineId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPlantesByPlantCommonNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        PlantCommonName plantCommonName = PlantCommonNameResourceIntTest.createEntity(em);
+        em.persist(plantCommonName);
+        em.flush();
+        plante.addPlantCommonName(plantCommonName);
+        planteRepository.saveAndFlush(plante);
+        Long plantCommonNameId = plantCommonName.getId();
+
+        // Get all the planteList where plantCommonName equals to plantCommonNameId
+        defaultPlanteShouldBeFound("plantCommonNameId.equals=" + plantCommonNameId);
+
+        // Get all the planteList where plantCommonName equals to plantCommonNameId + 1
+        defaultPlanteShouldNotBeFound("plantCommonNameId.equals=" + (plantCommonNameId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultPlanteShouldBeFound(String filter) throws Exception {
+        restPlanteMockMvc.perform(get("/api/plantes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(plante.getId().intValue())))
+            .andExpect(jsonPath("$.[*].phMin").value(hasItem(DEFAULT_PH_MIN.toString())))
+            .andExpect(jsonPath("$.[*].phMax").value(hasItem(DEFAULT_PH_MAX.toString())))
+            .andExpect(jsonPath("$.[*].tempMin").value(hasItem(DEFAULT_TEMP_MIN)))
+            .andExpect(jsonPath("$.[*].tempMax").value(hasItem(DEFAULT_TEMP_MAX)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+
+        // Check, that the count call also returns 1
+        restPlanteMockMvc.perform(get("/api/plantes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultPlanteShouldNotBeFound(String filter) throws Exception {
+        restPlanteMockMvc.perform(get("/api/plantes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restPlanteMockMvc.perform(get("/api/plantes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional
@@ -222,7 +777,7 @@ public class PlanteResourceIntTest {
             .phMax(UPDATED_PH_MAX)
             .tempMin(UPDATED_TEMP_MIN)
             .tempMax(UPDATED_TEMP_MAX)
-            .commonName(UPDATED_COMMON_NAME);
+            .description(UPDATED_DESCRIPTION);
 
         restPlanteMockMvc.perform(put("/api/plantes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -237,7 +792,7 @@ public class PlanteResourceIntTest {
         assertThat(testPlante.getPhMax()).isEqualTo(UPDATED_PH_MAX);
         assertThat(testPlante.getTempMin()).isEqualTo(UPDATED_TEMP_MIN);
         assertThat(testPlante.getTempMax()).isEqualTo(UPDATED_TEMP_MAX);
-        assertThat(testPlante.getCommonName()).isEqualTo(UPDATED_COMMON_NAME);
+        assertThat(testPlante.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
     }
 
     @Test

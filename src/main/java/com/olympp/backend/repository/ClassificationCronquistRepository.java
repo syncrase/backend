@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ClassificationCronquistRepository extends JpaRepository<ClassificationCronquist, Long> {
+public interface ClassificationCronquistRepository extends JpaRepository<ClassificationCronquist, Long>, JpaSpecificationExecutor<ClassificationCronquist> {
 
 }

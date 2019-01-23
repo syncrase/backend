@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Plante;
 import com.olympp.backend.service.PlanteService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.PlanteCriteria;
+import com.olympp.backend.service.PlanteQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,11 @@ public class PlanteResource {
 
     private final PlanteService planteService;
 
-    public PlanteResource(PlanteService planteService) {
+    private final PlanteQueryService planteQueryService;
+
+    public PlanteResource(PlanteService planteService, PlanteQueryService planteQueryService) {
         this.planteService = planteService;
+        this.planteQueryService = planteQueryService;
     }
 
     /**
@@ -80,13 +85,28 @@ public class PlanteResource {
     /**
      * GET  /plantes : get all the plantes.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of plantes in body
      */
     @GetMapping("/plantes")
     @Timed
-    public List<Plante> getAllPlantes() {
-        log.debug("REST request to get all Plantes");
-        return planteService.findAll();
+    public ResponseEntity<List<Plante>> getAllPlantes(PlanteCriteria criteria) {
+        log.debug("REST request to get Plantes by criteria: {}", criteria);
+        List<Plante> entityList = planteQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /plantes/count : count all the plantes.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/plantes/count")
+    @Timed
+    public ResponseEntity<Long> countPlantes(PlanteCriteria criteria) {
+        log.debug("REST request to count Plantes by criteria: {}", criteria);
+        return ResponseEntity.ok().body(planteQueryService.countByCriteria(criteria));
     }
 
     /**

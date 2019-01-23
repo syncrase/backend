@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Ordre;
 import com.olympp.backend.service.OrdreService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.OrdreCriteria;
+import com.olympp.backend.service.OrdreQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class OrdreResource {
 
     private final OrdreService ordreService;
 
-    public OrdreResource(OrdreService ordreService) {
+    private final OrdreQueryService ordreQueryService;
+
+    public OrdreResource(OrdreService ordreService, OrdreQueryService ordreQueryService) {
         this.ordreService = ordreService;
+        this.ordreQueryService = ordreQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class OrdreResource {
         log.debug("REST request to save Ordre : {}", ordre);
         if (ordre.getId() != null) {
             throw new BadRequestAlertException("A new ordre cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Ordre> fetchedOrdre = ordreService.findOneByName(ordre.getName());
-        if (fetchedOrdre.isPresent() == true) {
-            throw new BadRequestAlertException("This ordre already exists", ENTITY_NAME, "nameexists");
         }
         Ordre result = ordreService.save(ordre);
         return ResponseEntity.created(new URI("/api/ordres/" + result.getId()))
@@ -83,13 +84,28 @@ public class OrdreResource {
     /**
      * GET  /ordres : get all the ordres.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of ordres in body
      */
     @GetMapping("/ordres")
     @Timed
-    public List<Ordre> getAllOrdres() {
-        log.debug("REST request to get all Ordres");
-        return ordreService.findAll();
+    public ResponseEntity<List<Ordre>> getAllOrdres(OrdreCriteria criteria) {
+        log.debug("REST request to get Ordres by criteria: {}", criteria);
+        List<Ordre> entityList = ordreQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /ordres/count : count all the ordres.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/ordres/count")
+    @Timed
+    public ResponseEntity<Long> countOrdres(OrdreCriteria criteria) {
+        log.debug("REST request to count Ordres by criteria: {}", criteria);
+        return ResponseEntity.ok().body(ordreQueryService.countByCriteria(criteria));
     }
 
     /**

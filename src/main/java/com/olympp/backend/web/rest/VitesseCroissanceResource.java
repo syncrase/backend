@@ -5,6 +5,8 @@ import com.olympp.backend.domain.VitesseCroissance;
 import com.olympp.backend.service.VitesseCroissanceService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.VitesseCroissanceCriteria;
+import com.olympp.backend.service.VitesseCroissanceQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class VitesseCroissanceResource {
 
     private final VitesseCroissanceService vitesseCroissanceService;
 
-    public VitesseCroissanceResource(VitesseCroissanceService vitesseCroissanceService) {
+    private final VitesseCroissanceQueryService vitesseCroissanceQueryService;
+
+    public VitesseCroissanceResource(VitesseCroissanceService vitesseCroissanceService, VitesseCroissanceQueryService vitesseCroissanceQueryService) {
         this.vitesseCroissanceService = vitesseCroissanceService;
+        this.vitesseCroissanceQueryService = vitesseCroissanceQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class VitesseCroissanceResource {
         log.debug("REST request to save VitesseCroissance : {}", vitesseCroissance);
         if (vitesseCroissance.getId() != null) {
             throw new BadRequestAlertException("A new vitesseCroissance cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<VitesseCroissance> fetchedVitesseCroissance = vitesseCroissanceService.findOneByVitesseCroissance(vitesseCroissance.getVitesseCroissance());
-        if (fetchedVitesseCroissance.isPresent() == true) {
-            throw new BadRequestAlertException("This vitesseCroissance already exists", ENTITY_NAME, "vitessecroissanceexists");
         }
         VitesseCroissance result = vitesseCroissanceService.save(vitesseCroissance);
         return ResponseEntity.created(new URI("/api/vitesse-croissances/" + result.getId()))
@@ -83,13 +84,28 @@ public class VitesseCroissanceResource {
     /**
      * GET  /vitesse-croissances : get all the vitesseCroissances.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of vitesseCroissances in body
      */
     @GetMapping("/vitesse-croissances")
     @Timed
-    public List<VitesseCroissance> getAllVitesseCroissances() {
-        log.debug("REST request to get all VitesseCroissances");
-        return vitesseCroissanceService.findAll();
+    public ResponseEntity<List<VitesseCroissance>> getAllVitesseCroissances(VitesseCroissanceCriteria criteria) {
+        log.debug("REST request to get VitesseCroissances by criteria: {}", criteria);
+        List<VitesseCroissance> entityList = vitesseCroissanceQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /vitesse-croissances/count : count all the vitesseCroissances.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/vitesse-croissances/count")
+    @Timed
+    public ResponseEntity<Long> countVitesseCroissances(VitesseCroissanceCriteria criteria) {
+        log.debug("REST request to count VitesseCroissances by criteria: {}", criteria);
+        return ResponseEntity.ok().body(vitesseCroissanceQueryService.countByCriteria(criteria));
     }
 
     /**

@@ -6,6 +6,8 @@ import com.olympp.backend.domain.TypeRacine;
 import com.olympp.backend.repository.TypeRacineRepository;
 import com.olympp.backend.service.TypeRacineService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.TypeRacineCriteria;
+import com.olympp.backend.service.TypeRacineQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class TypeRacineResourceIntTest {
     private TypeRacineService typeRacineService;
 
     @Autowired
+    private TypeRacineQueryService typeRacineQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class TypeRacineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TypeRacineResource typeRacineResource = new TypeRacineResource(typeRacineService);
+        final TypeRacineResource typeRacineResource = new TypeRacineResource(typeRacineService, typeRacineQueryService);
         this.restTypeRacineMockMvc = MockMvcBuilders.standaloneSetup(typeRacineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class TypeRacineResourceIntTest {
             .andExpect(jsonPath("$.id").value(typeRacine.getId().intValue()))
             .andExpect(jsonPath("$.typeRacine").value(DEFAULT_TYPE_RACINE.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllTypeRacinesByTypeRacineIsEqualToSomething() throws Exception {
+        // Initialize the database
+        typeRacineRepository.saveAndFlush(typeRacine);
+
+        // Get all the typeRacineList where typeRacine equals to DEFAULT_TYPE_RACINE
+        defaultTypeRacineShouldBeFound("typeRacine.equals=" + DEFAULT_TYPE_RACINE);
+
+        // Get all the typeRacineList where typeRacine equals to UPDATED_TYPE_RACINE
+        defaultTypeRacineShouldNotBeFound("typeRacine.equals=" + UPDATED_TYPE_RACINE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeRacinesByTypeRacineIsInShouldWork() throws Exception {
+        // Initialize the database
+        typeRacineRepository.saveAndFlush(typeRacine);
+
+        // Get all the typeRacineList where typeRacine in DEFAULT_TYPE_RACINE or UPDATED_TYPE_RACINE
+        defaultTypeRacineShouldBeFound("typeRacine.in=" + DEFAULT_TYPE_RACINE + "," + UPDATED_TYPE_RACINE);
+
+        // Get all the typeRacineList where typeRacine equals to UPDATED_TYPE_RACINE
+        defaultTypeRacineShouldNotBeFound("typeRacine.in=" + UPDATED_TYPE_RACINE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeRacinesByTypeRacineIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        typeRacineRepository.saveAndFlush(typeRacine);
+
+        // Get all the typeRacineList where typeRacine is not null
+        defaultTypeRacineShouldBeFound("typeRacine.specified=true");
+
+        // Get all the typeRacineList where typeRacine is null
+        defaultTypeRacineShouldNotBeFound("typeRacine.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultTypeRacineShouldBeFound(String filter) throws Exception {
+        restTypeRacineMockMvc.perform(get("/api/type-racines?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(typeRacine.getId().intValue())))
+            .andExpect(jsonPath("$.[*].typeRacine").value(hasItem(DEFAULT_TYPE_RACINE.toString())));
+
+        // Check, that the count call also returns 1
+        restTypeRacineMockMvc.perform(get("/api/type-racines/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultTypeRacineShouldNotBeFound(String filter) throws Exception {
+        restTypeRacineMockMvc.perform(get("/api/type-racines?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restTypeRacineMockMvc.perform(get("/api/type-racines/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

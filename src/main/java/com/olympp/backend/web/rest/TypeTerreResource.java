@@ -5,6 +5,8 @@ import com.olympp.backend.domain.TypeTerre;
 import com.olympp.backend.service.TypeTerreService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.TypeTerreCriteria;
+import com.olympp.backend.service.TypeTerreQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class TypeTerreResource {
 
     private final TypeTerreService typeTerreService;
 
-    public TypeTerreResource(TypeTerreService typeTerreService) {
+    private final TypeTerreQueryService typeTerreQueryService;
+
+    public TypeTerreResource(TypeTerreService typeTerreService, TypeTerreQueryService typeTerreQueryService) {
         this.typeTerreService = typeTerreService;
+        this.typeTerreQueryService = typeTerreQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class TypeTerreResource {
         log.debug("REST request to save TypeTerre : {}", typeTerre);
         if (typeTerre.getId() != null) {
             throw new BadRequestAlertException("A new typeTerre cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<TypeTerre> fetchedTypeTerre = typeTerreService.findOneByTypeTerre(typeTerre.getTypeTerre());
-        if (fetchedTypeTerre.isPresent() == true) {
-            throw new BadRequestAlertException("This typeTerre already exists", ENTITY_NAME, "typeterreexists");
         }
         TypeTerre result = typeTerreService.save(typeTerre);
         return ResponseEntity.created(new URI("/api/type-terres/" + result.getId()))
@@ -83,13 +84,28 @@ public class TypeTerreResource {
     /**
      * GET  /type-terres : get all the typeTerres.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of typeTerres in body
      */
     @GetMapping("/type-terres")
     @Timed
-    public List<TypeTerre> getAllTypeTerres() {
-        log.debug("REST request to get all TypeTerres");
-        return typeTerreService.findAll();
+    public ResponseEntity<List<TypeTerre>> getAllTypeTerres(TypeTerreCriteria criteria) {
+        log.debug("REST request to get TypeTerres by criteria: {}", criteria);
+        List<TypeTerre> entityList = typeTerreQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /type-terres/count : count all the typeTerres.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/type-terres/count")
+    @Timed
+    public ResponseEntity<Long> countTypeTerres(TypeTerreCriteria criteria) {
+        log.debug("REST request to count TypeTerres by criteria: {}", criteria);
+        return ResponseEntity.ok().body(typeTerreQueryService.countByCriteria(criteria));
     }
 
     /**

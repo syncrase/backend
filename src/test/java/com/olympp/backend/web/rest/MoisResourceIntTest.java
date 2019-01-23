@@ -3,9 +3,13 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Mois;
+import com.olympp.backend.domain.Recolte;
+import com.olympp.backend.domain.Floraison;
 import com.olympp.backend.repository.MoisRepository;
 import com.olympp.backend.service.MoisService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.MoisCriteria;
+import com.olympp.backend.service.MoisQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +55,9 @@ public class MoisResourceIntTest {
     private MoisService moisService;
 
     @Autowired
+    private MoisQueryService moisQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +79,7 @@ public class MoisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MoisResource moisResource = new MoisResource(moisService);
+        final MoisResource moisResource = new MoisResource(moisService, moisQueryService);
         this.restMoisMockMvc = MockMvcBuilders.standaloneSetup(moisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +169,117 @@ public class MoisResourceIntTest {
             .andExpect(jsonPath("$.id").value(mois.getId().intValue()))
             .andExpect(jsonPath("$.mois").value(DEFAULT_MOIS.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllMoisByMoisIsEqualToSomething() throws Exception {
+        // Initialize the database
+        moisRepository.saveAndFlush(mois);
+
+        // Get all the moisList where mois equals to DEFAULT_MOIS
+        defaultMoisShouldBeFound("mois.equals=" + DEFAULT_MOIS);
+
+        // Get all the moisList where mois equals to UPDATED_MOIS
+        defaultMoisShouldNotBeFound("mois.equals=" + UPDATED_MOIS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllMoisByMoisIsInShouldWork() throws Exception {
+        // Initialize the database
+        moisRepository.saveAndFlush(mois);
+
+        // Get all the moisList where mois in DEFAULT_MOIS or UPDATED_MOIS
+        defaultMoisShouldBeFound("mois.in=" + DEFAULT_MOIS + "," + UPDATED_MOIS);
+
+        // Get all the moisList where mois equals to UPDATED_MOIS
+        defaultMoisShouldNotBeFound("mois.in=" + UPDATED_MOIS);
+    }
+
+    @Test
+    @Transactional
+    public void getAllMoisByMoisIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        moisRepository.saveAndFlush(mois);
+
+        // Get all the moisList where mois is not null
+        defaultMoisShouldBeFound("mois.specified=true");
+
+        // Get all the moisList where mois is null
+        defaultMoisShouldNotBeFound("mois.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllMoisByRecolteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Recolte recolte = RecolteResourceIntTest.createEntity(em);
+        em.persist(recolte);
+        em.flush();
+        mois.addRecolte(recolte);
+        moisRepository.saveAndFlush(mois);
+        Long recolteId = recolte.getId();
+
+        // Get all the moisList where recolte equals to recolteId
+        defaultMoisShouldBeFound("recolteId.equals=" + recolteId);
+
+        // Get all the moisList where recolte equals to recolteId + 1
+        defaultMoisShouldNotBeFound("recolteId.equals=" + (recolteId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllMoisByFloraisonIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Floraison floraison = FloraisonResourceIntTest.createEntity(em);
+        em.persist(floraison);
+        em.flush();
+        mois.addFloraison(floraison);
+        moisRepository.saveAndFlush(mois);
+        Long floraisonId = floraison.getId();
+
+        // Get all the moisList where floraison equals to floraisonId
+        defaultMoisShouldBeFound("floraisonId.equals=" + floraisonId);
+
+        // Get all the moisList where floraison equals to floraisonId + 1
+        defaultMoisShouldNotBeFound("floraisonId.equals=" + (floraisonId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultMoisShouldBeFound(String filter) throws Exception {
+        restMoisMockMvc.perform(get("/api/mois?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(mois.getId().intValue())))
+            .andExpect(jsonPath("$.[*].mois").value(hasItem(DEFAULT_MOIS.toString())));
+
+        // Check, that the count call also returns 1
+        restMoisMockMvc.perform(get("/api/mois/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultMoisShouldNotBeFound(String filter) throws Exception {
+        restMoisMockMvc.perform(get("/api/mois?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restMoisMockMvc.perform(get("/api/mois/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

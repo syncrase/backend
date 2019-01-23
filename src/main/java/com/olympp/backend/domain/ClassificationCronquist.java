@@ -41,17 +41,16 @@ public class ClassificationCronquist implements Serializable {
     @JsonIgnoreProperties("")
     private Espece espece;
 
+	public ClassificationCronquist() {
+		super();
+	}
+
 	public ClassificationCronquist(Ordre ordre, Famille famille, Genre genre, @NotNull Espece espece) {
 		super();
 		this.ordre = ordre;
 		this.famille = famille;
 		this.genre = genre;
 		this.espece = espece;
-	}
-
-	public ClassificationCronquist() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

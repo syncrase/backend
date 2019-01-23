@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Famille;
 import com.olympp.backend.service.FamilleService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.FamilleCriteria;
+import com.olympp.backend.service.FamilleQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class FamilleResource {
 
     private final FamilleService familleService;
 
-    public FamilleResource(FamilleService familleService) {
+    private final FamilleQueryService familleQueryService;
+
+    public FamilleResource(FamilleService familleService, FamilleQueryService familleQueryService) {
         this.familleService = familleService;
+        this.familleQueryService = familleQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class FamilleResource {
         log.debug("REST request to save Famille : {}", famille);
         if (famille.getId() != null) {
             throw new BadRequestAlertException("A new famille cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Famille> fetchedFamille = familleService.findOneByName(famille.getName());
-        if (fetchedFamille.isPresent() == true) {
-            throw new BadRequestAlertException("A famille already have this name", ENTITY_NAME, "nameexists");
         }
         Famille result = familleService.save(famille);
         return ResponseEntity.created(new URI("/api/familles/" + result.getId()))
@@ -83,13 +84,28 @@ public class FamilleResource {
     /**
      * GET  /familles : get all the familles.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of familles in body
      */
     @GetMapping("/familles")
     @Timed
-    public List<Famille> getAllFamilles() {
-        log.debug("REST request to get all Familles");
-        return familleService.findAll();
+    public ResponseEntity<List<Famille>> getAllFamilles(FamilleCriteria criteria) {
+        log.debug("REST request to get Familles by criteria: {}", criteria);
+        List<Famille> entityList = familleQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /familles/count : count all the familles.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/familles/count")
+    @Timed
+    public ResponseEntity<Long> countFamilles(FamilleCriteria criteria) {
+        log.debug("REST request to count Familles by criteria: {}", criteria);
+        return ResponseEntity.ok().body(familleQueryService.countByCriteria(criteria));
     }
 
     /**

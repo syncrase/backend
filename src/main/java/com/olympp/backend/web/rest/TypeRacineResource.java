@@ -5,6 +5,8 @@ import com.olympp.backend.domain.TypeRacine;
 import com.olympp.backend.service.TypeRacineService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.TypeRacineCriteria;
+import com.olympp.backend.service.TypeRacineQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class TypeRacineResource {
 
     private final TypeRacineService typeRacineService;
 
-    public TypeRacineResource(TypeRacineService typeRacineService) {
+    private final TypeRacineQueryService typeRacineQueryService;
+
+    public TypeRacineResource(TypeRacineService typeRacineService, TypeRacineQueryService typeRacineQueryService) {
         this.typeRacineService = typeRacineService;
+        this.typeRacineQueryService = typeRacineQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class TypeRacineResource {
         log.debug("REST request to save TypeRacine : {}", typeRacine);
         if (typeRacine.getId() != null) {
             throw new BadRequestAlertException("A new typeRacine cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<TypeRacine> fetchedTypeRacine = typeRacineService.findOneByTypeRacine(typeRacine.getTypeRacine());
-        if (fetchedTypeRacine.isPresent() == true) {
-            throw new BadRequestAlertException("This typeRacine already exists", ENTITY_NAME, "typeracineexists");
         }
         TypeRacine result = typeRacineService.save(typeRacine);
         return ResponseEntity.created(new URI("/api/type-racines/" + result.getId()))
@@ -83,13 +84,28 @@ public class TypeRacineResource {
     /**
      * GET  /type-racines : get all the typeRacines.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of typeRacines in body
      */
     @GetMapping("/type-racines")
     @Timed
-    public List<TypeRacine> getAllTypeRacines() {
-        log.debug("REST request to get all TypeRacines");
-        return typeRacineService.findAll();
+    public ResponseEntity<List<TypeRacine>> getAllTypeRacines(TypeRacineCriteria criteria) {
+        log.debug("REST request to get TypeRacines by criteria: {}", criteria);
+        List<TypeRacine> entityList = typeRacineQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /type-racines/count : count all the typeRacines.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/type-racines/count")
+    @Timed
+    public ResponseEntity<Long> countTypeRacines(TypeRacineCriteria criteria) {
+        log.debug("REST request to count TypeRacines by criteria: {}", criteria);
+        return ResponseEntity.ok().body(typeRacineQueryService.countByCriteria(criteria));
     }
 
     /**

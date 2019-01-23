@@ -1,8 +1,10 @@
 package com.olympp.backend;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import com.olympp.backend.domain.Genre;
 import com.olympp.backend.domain.InteractionPlantePlante;
 import com.olympp.backend.domain.Mois;
 import com.olympp.backend.domain.Ordre;
+import com.olympp.backend.domain.PlantCommonName;
 import com.olympp.backend.domain.Plante;
 import com.olympp.backend.domain.RichesseSol;
 import com.olympp.backend.domain.Strate;
@@ -35,6 +38,7 @@ import com.olympp.backend.repository.GenreRepository;
 import com.olympp.backend.repository.InteractionPlantePlanteRepository;
 import com.olympp.backend.repository.MoisRepository;
 import com.olympp.backend.repository.OrdreRepository;
+import com.olympp.backend.repository.PlantCommonNameRepository;
 import com.olympp.backend.repository.PlanteRepository;
 import com.olympp.backend.repository.RichesseSolRepository;
 import com.olympp.backend.repository.StrateRepository;
@@ -63,6 +67,7 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 	private PlanteRepository planteRepository;
 	private ClassificationCronquistRepository classificationCronquistRepository;
 	private InteractionPlantePlanteRepository interactionPlantePlanteRepository;
+	private PlantCommonNameRepository plantCommonNameRepository;
 
 	@Autowired
 	public void setMoisRepository(MoisRepository moisRepository) {
@@ -139,6 +144,11 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 	public void setInteractionPlantePlanteRepository(
 			InteractionPlantePlanteRepository interactionPlantePlanteRepository) {
 		this.interactionPlantePlanteRepository = interactionPlantePlanteRepository;
+	}
+
+	@Autowired
+	public void setPlantCommonNameRepository(PlantCommonNameRepository plantCommonNameRepository) {
+		this.plantCommonNameRepository = plantCommonNameRepository;
 	}
 
 	@Override
@@ -1842,7 +1852,9 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 		Famille famille = new Famille(data.get("Famille"));
 		Genre genre = new Genre(data.get("Genre"));
 		Espece espece = new Espece(data.get("Espece"));
+
 		String plantName = data.get("Plante");
+		PlantCommonName plantCommonName = new PlantCommonName(plantName);
 
 		Plante plante;
 		try {
@@ -1898,6 +1910,20 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 
 			}
 
+			if (!plantCommonNameRepository.exists(Example.of(plantCommonName))) {
+				plantCommonNameRepository.save(plantCommonName);
+			} else {
+				Optional<PlantCommonName> returned = plantCommonNameRepository.findOne(Example.of(plantCommonName));
+				if (returned.isPresent()) {
+					plantCommonName = returned.get();
+					log.info("Existing plantCommonName : " + plantCommonName.toString());
+				} else {
+					log.error("Unable to get instance of : " + plantCommonName.toString());
+				}
+
+			}
+			Set<PlantCommonName> plantCommonNames = new HashSet<>();
+			plantCommonNames.add(plantCommonName);
 
 			ClassificationCronquist classificationCronquist = new ClassificationCronquist(ordre, famille, genre,
 					espece);
@@ -1913,8 +1939,11 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 					log.error("Unable to get instance of : " + classificationCronquist.toString());
 				}
 			}
-			plante = new Plante(null, null, null, null, plantName, classificationCronquist, null, null, null, null,
-					null, null, null, null, null);
+//			plante = new Plante(null, null, null, null, plantName, classificationCronquist, null, null, null, null,
+//					null, null, null, null, null);
+			String description = null;
+			plante = new Plante(null, null, null, null, description, null, null, classificationCronquist, null, null,
+					null, null, null, null, null, plantCommonNames);
 			if (!planteRepository.exists(Example.of(plante))) {
 				planteRepository.save(plante);
 			} else {
@@ -1925,6 +1954,9 @@ public class AppLoading implements ApplicationListener<ContextRefreshedEvent> {
 					log.error("Unable to get instance of : " + plante.toString());
 				}
 			}
+
+			// TODO set the plant the the commonName and update the relation
+
 			log.info("Plant saved : " + plante.toString());
 			return plante;
 		} catch (Exception e) {

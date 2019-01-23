@@ -39,18 +39,17 @@ public class Livre implements Serializable {
     @JsonIgnore
     private Reference reference;
 
-    public Livre(String description, String isbn, String auteur, Integer page, Reference reference) {
+    public Livre() {
+		super();
+	}
+
+	public Livre(String description, String isbn, String auteur, Integer page, Reference reference) {
 		super();
 		this.description = description;
 		this.isbn = isbn;
 		this.auteur = auteur;
 		this.page = page;
 		this.reference = reference;
-	}
-
-	public Livre() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

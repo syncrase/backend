@@ -22,17 +22,16 @@ public class VitesseCroissance implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vitesse_croissance", unique = true)
+    @Column(name = "vitesse_croissance")
     private String vitesseCroissance;
-
-    public VitesseCroissance(String vitesseCroissance) {
-		super();
-		this.vitesseCroissance = vitesseCroissance;
-	}
 
 	public VitesseCroissance() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public VitesseCroissance(String vitesseCroissance) {
+		super();
+		this.vitesseCroissance = vitesseCroissance;
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

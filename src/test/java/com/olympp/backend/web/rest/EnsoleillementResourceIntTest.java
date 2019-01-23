@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Ensoleillement;
 import com.olympp.backend.repository.EnsoleillementRepository;
 import com.olympp.backend.service.EnsoleillementService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.EnsoleillementCriteria;
+import com.olympp.backend.service.EnsoleillementQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class EnsoleillementResourceIntTest {
     private EnsoleillementService ensoleillementService;
 
     @Autowired
+    private EnsoleillementQueryService ensoleillementQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class EnsoleillementResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EnsoleillementResource ensoleillementResource = new EnsoleillementResource(ensoleillementService);
+        final EnsoleillementResource ensoleillementResource = new EnsoleillementResource(ensoleillementService, ensoleillementQueryService);
         this.restEnsoleillementMockMvc = MockMvcBuilders.standaloneSetup(ensoleillementResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class EnsoleillementResourceIntTest {
             .andExpect(jsonPath("$.id").value(ensoleillement.getId().intValue()))
             .andExpect(jsonPath("$.ensoleillement").value(DEFAULT_ENSOLEILLEMENT.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllEnsoleillementsByEnsoleillementIsEqualToSomething() throws Exception {
+        // Initialize the database
+        ensoleillementRepository.saveAndFlush(ensoleillement);
+
+        // Get all the ensoleillementList where ensoleillement equals to DEFAULT_ENSOLEILLEMENT
+        defaultEnsoleillementShouldBeFound("ensoleillement.equals=" + DEFAULT_ENSOLEILLEMENT);
+
+        // Get all the ensoleillementList where ensoleillement equals to UPDATED_ENSOLEILLEMENT
+        defaultEnsoleillementShouldNotBeFound("ensoleillement.equals=" + UPDATED_ENSOLEILLEMENT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllEnsoleillementsByEnsoleillementIsInShouldWork() throws Exception {
+        // Initialize the database
+        ensoleillementRepository.saveAndFlush(ensoleillement);
+
+        // Get all the ensoleillementList where ensoleillement in DEFAULT_ENSOLEILLEMENT or UPDATED_ENSOLEILLEMENT
+        defaultEnsoleillementShouldBeFound("ensoleillement.in=" + DEFAULT_ENSOLEILLEMENT + "," + UPDATED_ENSOLEILLEMENT);
+
+        // Get all the ensoleillementList where ensoleillement equals to UPDATED_ENSOLEILLEMENT
+        defaultEnsoleillementShouldNotBeFound("ensoleillement.in=" + UPDATED_ENSOLEILLEMENT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllEnsoleillementsByEnsoleillementIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        ensoleillementRepository.saveAndFlush(ensoleillement);
+
+        // Get all the ensoleillementList where ensoleillement is not null
+        defaultEnsoleillementShouldBeFound("ensoleillement.specified=true");
+
+        // Get all the ensoleillementList where ensoleillement is null
+        defaultEnsoleillementShouldNotBeFound("ensoleillement.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultEnsoleillementShouldBeFound(String filter) throws Exception {
+        restEnsoleillementMockMvc.perform(get("/api/ensoleillements?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(ensoleillement.getId().intValue())))
+            .andExpect(jsonPath("$.[*].ensoleillement").value(hasItem(DEFAULT_ENSOLEILLEMENT.toString())));
+
+        // Check, that the count call also returns 1
+        restEnsoleillementMockMvc.perform(get("/api/ensoleillements/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultEnsoleillementShouldNotBeFound(String filter) throws Exception {
+        restEnsoleillementMockMvc.perform(get("/api/ensoleillements?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restEnsoleillementMockMvc.perform(get("/api/ensoleillements/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

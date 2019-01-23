@@ -3,9 +3,14 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Reference;
+import com.olympp.backend.domain.Livre;
+import com.olympp.backend.domain.PageWeb;
+import com.olympp.backend.domain.InteractionPlantePlante;
 import com.olympp.backend.repository.ReferenceRepository;
 import com.olympp.backend.service.ReferenceService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.ReferenceCriteria;
+import com.olympp.backend.service.ReferenceQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +56,9 @@ public class ReferenceResourceIntTest {
     private ReferenceService referenceService;
 
     @Autowired
+    private ReferenceQueryService referenceQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +80,7 @@ public class ReferenceResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ReferenceResource referenceResource = new ReferenceResource(referenceService);
+        final ReferenceResource referenceResource = new ReferenceResource(referenceService, referenceQueryService);
         this.restReferenceMockMvc = MockMvcBuilders.standaloneSetup(referenceResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +170,136 @@ public class ReferenceResourceIntTest {
             .andExpect(jsonPath("$.id").value(reference.getId().intValue()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllReferencesByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        referenceRepository.saveAndFlush(reference);
+
+        // Get all the referenceList where description equals to DEFAULT_DESCRIPTION
+        defaultReferenceShouldBeFound("description.equals=" + DEFAULT_DESCRIPTION);
+
+        // Get all the referenceList where description equals to UPDATED_DESCRIPTION
+        defaultReferenceShouldNotBeFound("description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReferencesByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        referenceRepository.saveAndFlush(reference);
+
+        // Get all the referenceList where description in DEFAULT_DESCRIPTION or UPDATED_DESCRIPTION
+        defaultReferenceShouldBeFound("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION);
+
+        // Get all the referenceList where description equals to UPDATED_DESCRIPTION
+        defaultReferenceShouldNotBeFound("description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReferencesByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        referenceRepository.saveAndFlush(reference);
+
+        // Get all the referenceList where description is not null
+        defaultReferenceShouldBeFound("description.specified=true");
+
+        // Get all the referenceList where description is null
+        defaultReferenceShouldNotBeFound("description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllReferencesByLivreIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Livre livre = LivreResourceIntTest.createEntity(em);
+        em.persist(livre);
+        em.flush();
+        reference.setLivre(livre);
+        referenceRepository.saveAndFlush(reference);
+        Long livreId = livre.getId();
+
+        // Get all the referenceList where livre equals to livreId
+        defaultReferenceShouldBeFound("livreId.equals=" + livreId);
+
+        // Get all the referenceList where livre equals to livreId + 1
+        defaultReferenceShouldNotBeFound("livreId.equals=" + (livreId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllReferencesByPageWebIsEqualToSomething() throws Exception {
+        // Initialize the database
+        PageWeb pageWeb = PageWebResourceIntTest.createEntity(em);
+        em.persist(pageWeb);
+        em.flush();
+        reference.setPageWeb(pageWeb);
+        referenceRepository.saveAndFlush(reference);
+        Long pageWebId = pageWeb.getId();
+
+        // Get all the referenceList where pageWeb equals to pageWebId
+        defaultReferenceShouldBeFound("pageWebId.equals=" + pageWebId);
+
+        // Get all the referenceList where pageWeb equals to pageWebId + 1
+        defaultReferenceShouldNotBeFound("pageWebId.equals=" + (pageWebId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllReferencesByInteractionPlantePlanteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        InteractionPlantePlante interactionPlantePlante = InteractionPlantePlanteResourceIntTest.createEntity(em);
+        em.persist(interactionPlantePlante);
+        em.flush();
+        reference.setInteractionPlantePlante(interactionPlantePlante);
+        referenceRepository.saveAndFlush(reference);
+        Long interactionPlantePlanteId = interactionPlantePlante.getId();
+
+        // Get all the referenceList where interactionPlantePlante equals to interactionPlantePlanteId
+        defaultReferenceShouldBeFound("interactionPlantePlanteId.equals=" + interactionPlantePlanteId);
+
+        // Get all the referenceList where interactionPlantePlante equals to interactionPlantePlanteId + 1
+        defaultReferenceShouldNotBeFound("interactionPlantePlanteId.equals=" + (interactionPlantePlanteId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultReferenceShouldBeFound(String filter) throws Exception {
+        restReferenceMockMvc.perform(get("/api/references?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(reference.getId().intValue())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+
+        // Check, that the count call also returns 1
+        restReferenceMockMvc.perform(get("/api/references/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultReferenceShouldNotBeFound(String filter) throws Exception {
+        restReferenceMockMvc.perform(get("/api/references?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restReferenceMockMvc.perform(get("/api/references/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

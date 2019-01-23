@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Genre;
 import com.olympp.backend.repository.GenreRepository;
 import com.olympp.backend.service.GenreService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.GenreCriteria;
+import com.olympp.backend.service.GenreQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class GenreResourceIntTest {
     private GenreService genreService;
 
     @Autowired
+    private GenreQueryService genreQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class GenreResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final GenreResource genreResource = new GenreResource(genreService);
+        final GenreResource genreResource = new GenreResource(genreService, genreQueryService);
         this.restGenreMockMvc = MockMvcBuilders.standaloneSetup(genreResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class GenreResourceIntTest {
             .andExpect(jsonPath("$.id").value(genre.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllGenresByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        genreRepository.saveAndFlush(genre);
+
+        // Get all the genreList where name equals to DEFAULT_NAME
+        defaultGenreShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the genreList where name equals to UPDATED_NAME
+        defaultGenreShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGenresByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        genreRepository.saveAndFlush(genre);
+
+        // Get all the genreList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultGenreShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the genreList where name equals to UPDATED_NAME
+        defaultGenreShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGenresByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        genreRepository.saveAndFlush(genre);
+
+        // Get all the genreList where name is not null
+        defaultGenreShouldBeFound("name.specified=true");
+
+        // Get all the genreList where name is null
+        defaultGenreShouldNotBeFound("name.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultGenreShouldBeFound(String filter) throws Exception {
+        restGenreMockMvc.perform(get("/api/genres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(genre.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+
+        // Check, that the count call also returns 1
+        restGenreMockMvc.perform(get("/api/genres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultGenreShouldNotBeFound(String filter) throws Exception {
+        restGenreMockMvc.perform(get("/api/genres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restGenreMockMvc.perform(get("/api/genres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

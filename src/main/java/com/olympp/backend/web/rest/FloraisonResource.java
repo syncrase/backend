@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Floraison;
 import com.olympp.backend.service.FloraisonService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.FloraisonCriteria;
+import com.olympp.backend.service.FloraisonQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class FloraisonResource {
 
     private final FloraisonService floraisonService;
 
-    public FloraisonResource(FloraisonService floraisonService) {
+    private final FloraisonQueryService floraisonQueryService;
+
+    public FloraisonResource(FloraisonService floraisonService, FloraisonQueryService floraisonQueryService) {
         this.floraisonService = floraisonService;
+        this.floraisonQueryService = floraisonQueryService;
     }
 
     /**
@@ -79,13 +84,28 @@ public class FloraisonResource {
     /**
      * GET  /floraisons : get all the floraisons.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of floraisons in body
      */
     @GetMapping("/floraisons")
     @Timed
-    public List<Floraison> getAllFloraisons() {
-        log.debug("REST request to get all Floraisons");
-        return floraisonService.findAll();
+    public ResponseEntity<List<Floraison>> getAllFloraisons(FloraisonCriteria criteria) {
+        log.debug("REST request to get Floraisons by criteria: {}", criteria);
+        List<Floraison> entityList = floraisonQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /floraisons/count : count all the floraisons.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/floraisons/count")
+    @Timed
+    public ResponseEntity<Long> countFloraisons(FloraisonCriteria criteria) {
+        log.debug("REST request to count Floraisons by criteria: {}", criteria);
+        return ResponseEntity.ok().body(floraisonQueryService.countByCriteria(criteria));
     }
 
     /**

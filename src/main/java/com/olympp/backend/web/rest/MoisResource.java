@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Mois;
 import com.olympp.backend.service.MoisService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.MoisCriteria;
+import com.olympp.backend.service.MoisQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class MoisResource {
 
     private final MoisService moisService;
 
-    public MoisResource(MoisService moisService) {
+    private final MoisQueryService moisQueryService;
+
+    public MoisResource(MoisService moisService, MoisQueryService moisQueryService) {
         this.moisService = moisService;
+        this.moisQueryService = moisQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class MoisResource {
         log.debug("REST request to save Mois : {}", mois);
         if (mois.getId() != null) {
             throw new BadRequestAlertException("A new mois cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Mois> fetchedMois = moisService.findOneByMois(mois.getMois());
-        if (fetchedMois.isPresent() == true) {
-            throw new BadRequestAlertException("This mois already exists", ENTITY_NAME, "moisexists");
         }
         Mois result = moisService.save(mois);
         return ResponseEntity.created(new URI("/api/mois/" + result.getId()))
@@ -83,13 +84,28 @@ public class MoisResource {
     /**
      * GET  /mois : get all the mois.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of mois in body
      */
     @GetMapping("/mois")
     @Timed
-    public List<Mois> getAllMois() {
-        log.debug("REST request to get all Mois");
-        return moisService.findAll();
+    public ResponseEntity<List<Mois>> getAllMois(MoisCriteria criteria) {
+        log.debug("REST request to get Mois by criteria: {}", criteria);
+        List<Mois> entityList = moisQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /mois/count : count all the mois.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/mois/count")
+    @Timed
+    public ResponseEntity<Long> countMois(MoisCriteria criteria) {
+        log.debug("REST request to count Mois by criteria: {}", criteria);
+        return ResponseEntity.ok().body(moisQueryService.countByCriteria(criteria));
     }
 
     /**

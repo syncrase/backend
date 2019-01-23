@@ -3,9 +3,12 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Livre;
+import com.olympp.backend.domain.Reference;
 import com.olympp.backend.repository.LivreRepository;
 import com.olympp.backend.service.LivreService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.LivreCriteria;
+import com.olympp.backend.service.LivreQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +63,9 @@ public class LivreResourceIntTest {
     private LivreService livreService;
 
     @Autowired
+    private LivreQueryService livreQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -81,7 +87,7 @@ public class LivreResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final LivreResource livreResource = new LivreResource(livreService);
+        final LivreResource livreResource = new LivreResource(livreService, livreQueryService);
         this.restLivreMockMvc = MockMvcBuilders.standaloneSetup(livreResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -183,6 +189,246 @@ public class LivreResourceIntTest {
             .andExpect(jsonPath("$.auteur").value(DEFAULT_AUTEUR.toString()))
             .andExpect(jsonPath("$.page").value(DEFAULT_PAGE));
     }
+
+    @Test
+    @Transactional
+    public void getAllLivresByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where description equals to DEFAULT_DESCRIPTION
+        defaultLivreShouldBeFound("description.equals=" + DEFAULT_DESCRIPTION);
+
+        // Get all the livreList where description equals to UPDATED_DESCRIPTION
+        defaultLivreShouldNotBeFound("description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where description in DEFAULT_DESCRIPTION or UPDATED_DESCRIPTION
+        defaultLivreShouldBeFound("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION);
+
+        // Get all the livreList where description equals to UPDATED_DESCRIPTION
+        defaultLivreShouldNotBeFound("description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where description is not null
+        defaultLivreShouldBeFound("description.specified=true");
+
+        // Get all the livreList where description is null
+        defaultLivreShouldNotBeFound("description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByIsbnIsEqualToSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where isbn equals to DEFAULT_ISBN
+        defaultLivreShouldBeFound("isbn.equals=" + DEFAULT_ISBN);
+
+        // Get all the livreList where isbn equals to UPDATED_ISBN
+        defaultLivreShouldNotBeFound("isbn.equals=" + UPDATED_ISBN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByIsbnIsInShouldWork() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where isbn in DEFAULT_ISBN or UPDATED_ISBN
+        defaultLivreShouldBeFound("isbn.in=" + DEFAULT_ISBN + "," + UPDATED_ISBN);
+
+        // Get all the livreList where isbn equals to UPDATED_ISBN
+        defaultLivreShouldNotBeFound("isbn.in=" + UPDATED_ISBN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByIsbnIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where isbn is not null
+        defaultLivreShouldBeFound("isbn.specified=true");
+
+        // Get all the livreList where isbn is null
+        defaultLivreShouldNotBeFound("isbn.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByAuteurIsEqualToSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where auteur equals to DEFAULT_AUTEUR
+        defaultLivreShouldBeFound("auteur.equals=" + DEFAULT_AUTEUR);
+
+        // Get all the livreList where auteur equals to UPDATED_AUTEUR
+        defaultLivreShouldNotBeFound("auteur.equals=" + UPDATED_AUTEUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByAuteurIsInShouldWork() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where auteur in DEFAULT_AUTEUR or UPDATED_AUTEUR
+        defaultLivreShouldBeFound("auteur.in=" + DEFAULT_AUTEUR + "," + UPDATED_AUTEUR);
+
+        // Get all the livreList where auteur equals to UPDATED_AUTEUR
+        defaultLivreShouldNotBeFound("auteur.in=" + UPDATED_AUTEUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByAuteurIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where auteur is not null
+        defaultLivreShouldBeFound("auteur.specified=true");
+
+        // Get all the livreList where auteur is null
+        defaultLivreShouldNotBeFound("auteur.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByPageIsEqualToSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where page equals to DEFAULT_PAGE
+        defaultLivreShouldBeFound("page.equals=" + DEFAULT_PAGE);
+
+        // Get all the livreList where page equals to UPDATED_PAGE
+        defaultLivreShouldNotBeFound("page.equals=" + UPDATED_PAGE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByPageIsInShouldWork() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where page in DEFAULT_PAGE or UPDATED_PAGE
+        defaultLivreShouldBeFound("page.in=" + DEFAULT_PAGE + "," + UPDATED_PAGE);
+
+        // Get all the livreList where page equals to UPDATED_PAGE
+        defaultLivreShouldNotBeFound("page.in=" + UPDATED_PAGE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByPageIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where page is not null
+        defaultLivreShouldBeFound("page.specified=true");
+
+        // Get all the livreList where page is null
+        defaultLivreShouldNotBeFound("page.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByPageIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where page greater than or equals to DEFAULT_PAGE
+        defaultLivreShouldBeFound("page.greaterOrEqualThan=" + DEFAULT_PAGE);
+
+        // Get all the livreList where page greater than or equals to UPDATED_PAGE
+        defaultLivreShouldNotBeFound("page.greaterOrEqualThan=" + UPDATED_PAGE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllLivresByPageIsLessThanSomething() throws Exception {
+        // Initialize the database
+        livreRepository.saveAndFlush(livre);
+
+        // Get all the livreList where page less than or equals to DEFAULT_PAGE
+        defaultLivreShouldNotBeFound("page.lessThan=" + DEFAULT_PAGE);
+
+        // Get all the livreList where page less than or equals to UPDATED_PAGE
+        defaultLivreShouldBeFound("page.lessThan=" + UPDATED_PAGE);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllLivresByReferenceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Reference reference = ReferenceResourceIntTest.createEntity(em);
+        em.persist(reference);
+        em.flush();
+        livre.setReference(reference);
+        reference.setLivre(livre);
+        livreRepository.saveAndFlush(livre);
+        Long referenceId = reference.getId();
+
+        // Get all the livreList where reference equals to referenceId
+        defaultLivreShouldBeFound("referenceId.equals=" + referenceId);
+
+        // Get all the livreList where reference equals to referenceId + 1
+        defaultLivreShouldNotBeFound("referenceId.equals=" + (referenceId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultLivreShouldBeFound(String filter) throws Exception {
+        restLivreMockMvc.perform(get("/api/livres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(livre.getId().intValue())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].isbn").value(hasItem(DEFAULT_ISBN.toString())))
+            .andExpect(jsonPath("$.[*].auteur").value(hasItem(DEFAULT_AUTEUR.toString())))
+            .andExpect(jsonPath("$.[*].page").value(hasItem(DEFAULT_PAGE)));
+
+        // Check, that the count call also returns 1
+        restLivreMockMvc.perform(get("/api/livres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultLivreShouldNotBeFound(String filter) throws Exception {
+        restLivreMockMvc.perform(get("/api/livres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restLivreMockMvc.perform(get("/api/livres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

@@ -6,6 +6,8 @@ import com.olympp.backend.domain.TypeFeuillage;
 import com.olympp.backend.repository.TypeFeuillageRepository;
 import com.olympp.backend.service.TypeFeuillageService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.TypeFeuillageCriteria;
+import com.olympp.backend.service.TypeFeuillageQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class TypeFeuillageResourceIntTest {
     private TypeFeuillageService typeFeuillageService;
 
     @Autowired
+    private TypeFeuillageQueryService typeFeuillageQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class TypeFeuillageResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TypeFeuillageResource typeFeuillageResource = new TypeFeuillageResource(typeFeuillageService);
+        final TypeFeuillageResource typeFeuillageResource = new TypeFeuillageResource(typeFeuillageService, typeFeuillageQueryService);
         this.restTypeFeuillageMockMvc = MockMvcBuilders.standaloneSetup(typeFeuillageResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class TypeFeuillageResourceIntTest {
             .andExpect(jsonPath("$.id").value(typeFeuillage.getId().intValue()))
             .andExpect(jsonPath("$.typeFeuillage").value(DEFAULT_TYPE_FEUILLAGE.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllTypeFeuillagesByTypeFeuillageIsEqualToSomething() throws Exception {
+        // Initialize the database
+        typeFeuillageRepository.saveAndFlush(typeFeuillage);
+
+        // Get all the typeFeuillageList where typeFeuillage equals to DEFAULT_TYPE_FEUILLAGE
+        defaultTypeFeuillageShouldBeFound("typeFeuillage.equals=" + DEFAULT_TYPE_FEUILLAGE);
+
+        // Get all the typeFeuillageList where typeFeuillage equals to UPDATED_TYPE_FEUILLAGE
+        defaultTypeFeuillageShouldNotBeFound("typeFeuillage.equals=" + UPDATED_TYPE_FEUILLAGE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeFeuillagesByTypeFeuillageIsInShouldWork() throws Exception {
+        // Initialize the database
+        typeFeuillageRepository.saveAndFlush(typeFeuillage);
+
+        // Get all the typeFeuillageList where typeFeuillage in DEFAULT_TYPE_FEUILLAGE or UPDATED_TYPE_FEUILLAGE
+        defaultTypeFeuillageShouldBeFound("typeFeuillage.in=" + DEFAULT_TYPE_FEUILLAGE + "," + UPDATED_TYPE_FEUILLAGE);
+
+        // Get all the typeFeuillageList where typeFeuillage equals to UPDATED_TYPE_FEUILLAGE
+        defaultTypeFeuillageShouldNotBeFound("typeFeuillage.in=" + UPDATED_TYPE_FEUILLAGE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllTypeFeuillagesByTypeFeuillageIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        typeFeuillageRepository.saveAndFlush(typeFeuillage);
+
+        // Get all the typeFeuillageList where typeFeuillage is not null
+        defaultTypeFeuillageShouldBeFound("typeFeuillage.specified=true");
+
+        // Get all the typeFeuillageList where typeFeuillage is null
+        defaultTypeFeuillageShouldNotBeFound("typeFeuillage.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultTypeFeuillageShouldBeFound(String filter) throws Exception {
+        restTypeFeuillageMockMvc.perform(get("/api/type-feuillages?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(typeFeuillage.getId().intValue())))
+            .andExpect(jsonPath("$.[*].typeFeuillage").value(hasItem(DEFAULT_TYPE_FEUILLAGE.toString())));
+
+        // Check, that the count call also returns 1
+        restTypeFeuillageMockMvc.perform(get("/api/type-feuillages/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultTypeFeuillageShouldNotBeFound(String filter) throws Exception {
+        restTypeFeuillageMockMvc.perform(get("/api/type-feuillages?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restTypeFeuillageMockMvc.perform(get("/api/type-feuillages/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

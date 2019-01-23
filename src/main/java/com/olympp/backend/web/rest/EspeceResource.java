@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Espece;
 import com.olympp.backend.service.EspeceService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.EspeceCriteria;
+import com.olympp.backend.service.EspeceQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class EspeceResource {
 
     private final EspeceService especeService;
 
-    public EspeceResource(EspeceService especeService) {
+    private final EspeceQueryService especeQueryService;
+
+    public EspeceResource(EspeceService especeService, EspeceQueryService especeQueryService) {
         this.especeService = especeService;
+        this.especeQueryService = especeQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class EspeceResource {
         log.debug("REST request to save Espece : {}", espece);
         if (espece.getId() != null) {
             throw new BadRequestAlertException("A new espece cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Espece> fetchedEspece = especeService.findOneByName(espece.getName());
-        if (fetchedEspece.isPresent() == true) {
-            throw new BadRequestAlertException("An espece already have this name", ENTITY_NAME, "nameexists");
         }
         Espece result = especeService.save(espece);
         return ResponseEntity.created(new URI("/api/especes/" + result.getId()))
@@ -83,13 +84,28 @@ public class EspeceResource {
     /**
      * GET  /especes : get all the especes.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of especes in body
      */
     @GetMapping("/especes")
     @Timed
-    public List<Espece> getAllEspeces() {
-        log.debug("REST request to get all Especes");
-        return especeService.findAll();
+    public ResponseEntity<List<Espece>> getAllEspeces(EspeceCriteria criteria) {
+        log.debug("REST request to get Especes by criteria: {}", criteria);
+        List<Espece> entityList = especeQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /especes/count : count all the especes.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/especes/count")
+    @Timed
+    public ResponseEntity<Long> countEspeces(EspeceCriteria criteria) {
+        log.debug("REST request to count Especes by criteria: {}", criteria);
+        return ResponseEntity.ok().body(especeQueryService.countByCriteria(criteria));
     }
 
     /**

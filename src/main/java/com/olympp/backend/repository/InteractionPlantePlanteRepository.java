@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface InteractionPlantePlanteRepository extends JpaRepository<InteractionPlantePlante, Long> {
+public interface InteractionPlantePlanteRepository extends JpaRepository<InteractionPlantePlante, Long>, JpaSpecificationExecutor<InteractionPlantePlante> {
 
 }

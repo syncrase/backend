@@ -1,9 +1,6 @@
 package com.olympp.backend.repository;
 
 import com.olympp.backend.domain.Famille;
-
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface FamilleRepository extends JpaRepository<Famille, Long> {
-
-	Optional<Famille> findByName(String name);
+public interface FamilleRepository extends JpaRepository<Famille, Long>, JpaSpecificationExecutor<Famille> {
 
 }

@@ -5,6 +5,8 @@ import com.olympp.backend.domain.RichesseSol;
 import com.olympp.backend.service.RichesseSolService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.RichesseSolCriteria;
+import com.olympp.backend.service.RichesseSolQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class RichesseSolResource {
 
     private final RichesseSolService richesseSolService;
 
-    public RichesseSolResource(RichesseSolService richesseSolService) {
+    private final RichesseSolQueryService richesseSolQueryService;
+
+    public RichesseSolResource(RichesseSolService richesseSolService, RichesseSolQueryService richesseSolQueryService) {
         this.richesseSolService = richesseSolService;
+        this.richesseSolQueryService = richesseSolQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class RichesseSolResource {
         log.debug("REST request to save RichesseSol : {}", richesseSol);
         if (richesseSol.getId() != null) {
             throw new BadRequestAlertException("A new richesseSol cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<RichesseSol> fetchedRichesseSol = richesseSolService.findOneByRichesseSol(richesseSol.getRichesseSol());
-        if (fetchedRichesseSol.isPresent() == true) {
-            throw new BadRequestAlertException("This richesseSol already exists", ENTITY_NAME, "richesseSolexists");
         }
         RichesseSol result = richesseSolService.save(richesseSol);
         return ResponseEntity.created(new URI("/api/richesse-sols/" + result.getId()))
@@ -83,13 +84,28 @@ public class RichesseSolResource {
     /**
      * GET  /richesse-sols : get all the richesseSols.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of richesseSols in body
      */
     @GetMapping("/richesse-sols")
     @Timed
-    public List<RichesseSol> getAllRichesseSols() {
-        log.debug("REST request to get all RichesseSols");
-        return richesseSolService.findAll();
+    public ResponseEntity<List<RichesseSol>> getAllRichesseSols(RichesseSolCriteria criteria) {
+        log.debug("REST request to get RichesseSols by criteria: {}", criteria);
+        List<RichesseSol> entityList = richesseSolQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /richesse-sols/count : count all the richesseSols.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/richesse-sols/count")
+    @Timed
+    public ResponseEntity<Long> countRichesseSols(RichesseSolCriteria criteria) {
+        log.debug("REST request to count RichesseSols by criteria: {}", criteria);
+        return ResponseEntity.ok().body(richesseSolQueryService.countByCriteria(criteria));
     }
 
     /**

@@ -3,9 +3,12 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.PageWeb;
+import com.olympp.backend.domain.Reference;
 import com.olympp.backend.repository.PageWebRepository;
 import com.olympp.backend.service.PageWebService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.PageWebCriteria;
+import com.olympp.backend.service.PageWebQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +57,9 @@ public class PageWebResourceIntTest {
     private PageWebService pageWebService;
 
     @Autowired
+    private PageWebQueryService pageWebQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -75,7 +81,7 @@ public class PageWebResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PageWebResource pageWebResource = new PageWebResource(pageWebService);
+        final PageWebResource pageWebResource = new PageWebResource(pageWebService, pageWebQueryService);
         this.restPageWebMockMvc = MockMvcBuilders.standaloneSetup(pageWebResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -169,6 +175,139 @@ public class PageWebResourceIntTest {
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.url").value(DEFAULT_URL.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where description equals to DEFAULT_DESCRIPTION
+        defaultPageWebShouldBeFound("description.equals=" + DEFAULT_DESCRIPTION);
+
+        // Get all the pageWebList where description equals to UPDATED_DESCRIPTION
+        defaultPageWebShouldNotBeFound("description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where description in DEFAULT_DESCRIPTION or UPDATED_DESCRIPTION
+        defaultPageWebShouldBeFound("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION);
+
+        // Get all the pageWebList where description equals to UPDATED_DESCRIPTION
+        defaultPageWebShouldNotBeFound("description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where description is not null
+        defaultPageWebShouldBeFound("description.specified=true");
+
+        // Get all the pageWebList where description is null
+        defaultPageWebShouldNotBeFound("description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByUrlIsEqualToSomething() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where url equals to DEFAULT_URL
+        defaultPageWebShouldBeFound("url.equals=" + DEFAULT_URL);
+
+        // Get all the pageWebList where url equals to UPDATED_URL
+        defaultPageWebShouldNotBeFound("url.equals=" + UPDATED_URL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByUrlIsInShouldWork() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where url in DEFAULT_URL or UPDATED_URL
+        defaultPageWebShouldBeFound("url.in=" + DEFAULT_URL + "," + UPDATED_URL);
+
+        // Get all the pageWebList where url equals to UPDATED_URL
+        defaultPageWebShouldNotBeFound("url.in=" + UPDATED_URL);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByUrlIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        pageWebRepository.saveAndFlush(pageWeb);
+
+        // Get all the pageWebList where url is not null
+        defaultPageWebShouldBeFound("url.specified=true");
+
+        // Get all the pageWebList where url is null
+        defaultPageWebShouldNotBeFound("url.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPageWebsByReferenceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Reference reference = ReferenceResourceIntTest.createEntity(em);
+        em.persist(reference);
+        em.flush();
+        pageWeb.setReference(reference);
+        reference.setPageWeb(pageWeb);
+        pageWebRepository.saveAndFlush(pageWeb);
+        Long referenceId = reference.getId();
+
+        // Get all the pageWebList where reference equals to referenceId
+        defaultPageWebShouldBeFound("referenceId.equals=" + referenceId);
+
+        // Get all the pageWebList where reference equals to referenceId + 1
+        defaultPageWebShouldNotBeFound("referenceId.equals=" + (referenceId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultPageWebShouldBeFound(String filter) throws Exception {
+        restPageWebMockMvc.perform(get("/api/page-webs?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(pageWeb.getId().intValue())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL.toString())));
+
+        // Check, that the count call also returns 1
+        restPageWebMockMvc.perform(get("/api/page-webs/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultPageWebShouldNotBeFound(String filter) throws Exception {
+        restPageWebMockMvc.perform(get("/api/page-webs?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restPageWebMockMvc.perform(get("/api/page-webs/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

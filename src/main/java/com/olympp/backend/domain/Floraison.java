@@ -13,8 +13,7 @@ import java.util.Objects;
  * A Floraison.
  */
 @Entity
-@Table(name = "floraison",
-uniqueConstraints={@UniqueConstraint(columnNames={"plante_id", "mois_id"})})
+@Table(name = "floraison")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Floraison implements Serializable {
 
@@ -32,19 +31,7 @@ public class Floraison implements Serializable {
     @JsonIgnoreProperties("floraisons")
     private Mois mois;
 
-    
-    public Floraison(Plante plante, Mois mois) {
-		super();
-		this.plante = plante;
-		this.mois = mois;
-	}
-
-	public Floraison() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }

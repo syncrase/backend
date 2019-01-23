@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Ensoleillement;
 import com.olympp.backend.service.EnsoleillementService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.EnsoleillementCriteria;
+import com.olympp.backend.service.EnsoleillementQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class EnsoleillementResource {
 
     private final EnsoleillementService ensoleillementService;
 
-    public EnsoleillementResource(EnsoleillementService ensoleillementService) {
+    private final EnsoleillementQueryService ensoleillementQueryService;
+
+    public EnsoleillementResource(EnsoleillementService ensoleillementService, EnsoleillementQueryService ensoleillementQueryService) {
         this.ensoleillementService = ensoleillementService;
+        this.ensoleillementQueryService = ensoleillementQueryService;
     }
 
     /**
@@ -48,11 +53,6 @@ public class EnsoleillementResource {
         if (ensoleillement.getId() != null) {
             throw new BadRequestAlertException("A new ensoleillement cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<Ensoleillement> fetchedEnsoleillement = ensoleillementService.findOneByEnsoleillement(ensoleillement.getEnsoleillement());
-        if (fetchedEnsoleillement.isPresent() == true) {
-            throw new BadRequestAlertException("An ensoleillement already have this name", ENTITY_NAME, "nameexists");
-        }
-        
         Ensoleillement result = ensoleillementService.save(ensoleillement);
         return ResponseEntity.created(new URI("/api/ensoleillements/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -84,13 +84,28 @@ public class EnsoleillementResource {
     /**
      * GET  /ensoleillements : get all the ensoleillements.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of ensoleillements in body
      */
     @GetMapping("/ensoleillements")
     @Timed
-    public List<Ensoleillement> getAllEnsoleillements() {
-        log.debug("REST request to get all Ensoleillements");
-        return ensoleillementService.findAll();
+    public ResponseEntity<List<Ensoleillement>> getAllEnsoleillements(EnsoleillementCriteria criteria) {
+        log.debug("REST request to get Ensoleillements by criteria: {}", criteria);
+        List<Ensoleillement> entityList = ensoleillementQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /ensoleillements/count : count all the ensoleillements.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/ensoleillements/count")
+    @Timed
+    public ResponseEntity<Long> countEnsoleillements(EnsoleillementCriteria criteria) {
+        log.debug("REST request to count Ensoleillements by criteria: {}", criteria);
+        return ResponseEntity.ok().body(ensoleillementQueryService.countByCriteria(criteria));
     }
 
     /**

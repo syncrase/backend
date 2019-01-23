@@ -5,6 +5,8 @@ import com.olympp.backend.domain.Genre;
 import com.olympp.backend.service.GenreService;
 import com.olympp.backend.web.rest.errors.BadRequestAlertException;
 import com.olympp.backend.web.rest.util.HeaderUtil;
+import com.olympp.backend.service.dto.GenreCriteria;
+import com.olympp.backend.service.GenreQueryService;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,11 @@ public class GenreResource {
 
     private final GenreService genreService;
 
-    public GenreResource(GenreService genreService) {
+    private final GenreQueryService genreQueryService;
+
+    public GenreResource(GenreService genreService, GenreQueryService genreQueryService) {
         this.genreService = genreService;
+        this.genreQueryService = genreQueryService;
     }
 
     /**
@@ -47,10 +52,6 @@ public class GenreResource {
         log.debug("REST request to save Genre : {}", genre);
         if (genre.getId() != null) {
             throw new BadRequestAlertException("A new genre cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Optional<Genre> fetchedGenre = genreService.findOneByName(genre.getName());
-        if (fetchedGenre.isPresent() == true) {
-            throw new BadRequestAlertException("This genre already exists", ENTITY_NAME, "nameexists");
         }
         Genre result = genreService.save(genre);
         return ResponseEntity.created(new URI("/api/genres/" + result.getId()))
@@ -83,13 +84,28 @@ public class GenreResource {
     /**
      * GET  /genres : get all the genres.
      *
+     * @param criteria the criterias which the requested entities should match
      * @return the ResponseEntity with status 200 (OK) and the list of genres in body
      */
     @GetMapping("/genres")
     @Timed
-    public List<Genre> getAllGenres() {
-        log.debug("REST request to get all Genres");
-        return genreService.findAll();
+    public ResponseEntity<List<Genre>> getAllGenres(GenreCriteria criteria) {
+        log.debug("REST request to get Genres by criteria: {}", criteria);
+        List<Genre> entityList = genreQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /genres/count : count all the genres.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/genres/count")
+    @Timed
+    public ResponseEntity<Long> countGenres(GenreCriteria criteria) {
+        log.debug("REST request to count Genres by criteria: {}", criteria);
+        return ResponseEntity.ok().body(genreQueryService.countByCriteria(criteria));
     }
 
     /**

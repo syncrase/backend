@@ -25,8 +25,8 @@ public class Mois implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@Column(name = "mois", unique = true)
-	private String mois;
+    @Column(name = "mois")
+    private String mois;
 
     @OneToMany(mappedBy = "mois")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -34,22 +34,29 @@ public class Mois implements Serializable {
     @OneToMany(mappedBy = "mois")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Floraison> floraisons = new HashSet<>();
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     
-    public Mois(String mois) {
-		super();
-		this.mois = mois;
-	}
-
 	public Mois() {
 		super();
 	}
 
+	public Mois(String mois, Set<Recolte> recoltes, Set<Floraison> floraisons) {
+		super();
+		this.mois = mois;
+		this.recoltes = recoltes;
+		this.floraisons = floraisons;
+	}
+
+	public Mois(String mois) {
+		super();
+		this.mois = mois;
+	}
+
+	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
-    
-	public void setId(Long id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
 

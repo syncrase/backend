@@ -3,11 +3,14 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.InteractionPlantePlante;
+import com.olympp.backend.domain.Reference;
 import com.olympp.backend.domain.Plante;
 import com.olympp.backend.domain.Plante;
 import com.olympp.backend.repository.InteractionPlantePlanteRepository;
 import com.olympp.backend.service.InteractionPlantePlanteService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.InteractionPlantePlanteCriteria;
+import com.olympp.backend.service.InteractionPlantePlanteQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +59,9 @@ public class InteractionPlantePlanteResourceIntTest {
     private InteractionPlantePlanteService interactionPlantePlanteService;
 
     @Autowired
+    private InteractionPlantePlanteQueryService interactionPlantePlanteQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -77,7 +83,7 @@ public class InteractionPlantePlanteResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final InteractionPlantePlanteResource interactionPlantePlanteResource = new InteractionPlantePlanteResource(interactionPlantePlanteService);
+        final InteractionPlantePlanteResource interactionPlantePlanteResource = new InteractionPlantePlanteResource(interactionPlantePlanteService, interactionPlantePlanteQueryService);
         this.restInteractionPlantePlanteMockMvc = MockMvcBuilders.standaloneSetup(interactionPlantePlanteResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -178,6 +184,176 @@ public class InteractionPlantePlanteResourceIntTest {
             .andExpect(jsonPath("$.notation").value(DEFAULT_NOTATION.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByNotationIsEqualToSomething() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where notation equals to DEFAULT_NOTATION
+        defaultInteractionPlantePlanteShouldBeFound("notation.equals=" + DEFAULT_NOTATION);
+
+        // Get all the interactionPlantePlanteList where notation equals to UPDATED_NOTATION
+        defaultInteractionPlantePlanteShouldNotBeFound("notation.equals=" + UPDATED_NOTATION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByNotationIsInShouldWork() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where notation in DEFAULT_NOTATION or UPDATED_NOTATION
+        defaultInteractionPlantePlanteShouldBeFound("notation.in=" + DEFAULT_NOTATION + "," + UPDATED_NOTATION);
+
+        // Get all the interactionPlantePlanteList where notation equals to UPDATED_NOTATION
+        defaultInteractionPlantePlanteShouldNotBeFound("notation.in=" + UPDATED_NOTATION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByNotationIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where notation is not null
+        defaultInteractionPlantePlanteShouldBeFound("notation.specified=true");
+
+        // Get all the interactionPlantePlanteList where notation is null
+        defaultInteractionPlantePlanteShouldNotBeFound("notation.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where description equals to DEFAULT_DESCRIPTION
+        defaultInteractionPlantePlanteShouldBeFound("description.equals=" + DEFAULT_DESCRIPTION);
+
+        // Get all the interactionPlantePlanteList where description equals to UPDATED_DESCRIPTION
+        defaultInteractionPlantePlanteShouldNotBeFound("description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where description in DEFAULT_DESCRIPTION or UPDATED_DESCRIPTION
+        defaultInteractionPlantePlanteShouldBeFound("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION);
+
+        // Get all the interactionPlantePlanteList where description equals to UPDATED_DESCRIPTION
+        defaultInteractionPlantePlanteShouldNotBeFound("description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+
+        // Get all the interactionPlantePlanteList where description is not null
+        defaultInteractionPlantePlanteShouldBeFound("description.specified=true");
+
+        // Get all the interactionPlantePlanteList where description is null
+        defaultInteractionPlantePlanteShouldNotBeFound("description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByReferenceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Reference reference = ReferenceResourceIntTest.createEntity(em);
+        em.persist(reference);
+        em.flush();
+        interactionPlantePlante.addReference(reference);
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+        Long referenceId = reference.getId();
+
+        // Get all the interactionPlantePlanteList where reference equals to referenceId
+        defaultInteractionPlantePlanteShouldBeFound("referenceId.equals=" + referenceId);
+
+        // Get all the interactionPlantePlanteList where reference equals to referenceId + 1
+        defaultInteractionPlantePlanteShouldNotBeFound("referenceId.equals=" + (referenceId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByDePlanteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Plante dePlante = PlanteResourceIntTest.createEntity(em);
+        em.persist(dePlante);
+        em.flush();
+        interactionPlantePlante.setDePlante(dePlante);
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+        Long dePlanteId = dePlante.getId();
+
+        // Get all the interactionPlantePlanteList where dePlante equals to dePlanteId
+        defaultInteractionPlantePlanteShouldBeFound("dePlanteId.equals=" + dePlanteId);
+
+        // Get all the interactionPlantePlanteList where dePlante equals to dePlanteId + 1
+        defaultInteractionPlantePlanteShouldNotBeFound("dePlanteId.equals=" + (dePlanteId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInteractionPlantePlantesByVersPlanteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Plante versPlante = PlanteResourceIntTest.createEntity(em);
+        em.persist(versPlante);
+        em.flush();
+        interactionPlantePlante.setVersPlante(versPlante);
+        interactionPlantePlanteRepository.saveAndFlush(interactionPlantePlante);
+        Long versPlanteId = versPlante.getId();
+
+        // Get all the interactionPlantePlanteList where versPlante equals to versPlanteId
+        defaultInteractionPlantePlanteShouldBeFound("versPlanteId.equals=" + versPlanteId);
+
+        // Get all the interactionPlantePlanteList where versPlante equals to versPlanteId + 1
+        defaultInteractionPlantePlanteShouldNotBeFound("versPlanteId.equals=" + (versPlanteId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultInteractionPlantePlanteShouldBeFound(String filter) throws Exception {
+        restInteractionPlantePlanteMockMvc.perform(get("/api/interaction-plante-plantes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(interactionPlantePlante.getId().intValue())))
+            .andExpect(jsonPath("$.[*].notation").value(hasItem(DEFAULT_NOTATION.toString())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+
+        // Check, that the count call also returns 1
+        restInteractionPlantePlanteMockMvc.perform(get("/api/interaction-plante-plantes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultInteractionPlantePlanteShouldNotBeFound(String filter) throws Exception {
+        restInteractionPlantePlanteMockMvc.perform(get("/api/interaction-plante-plantes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restInteractionPlantePlanteMockMvc.perform(get("/api/interaction-plante-plantes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

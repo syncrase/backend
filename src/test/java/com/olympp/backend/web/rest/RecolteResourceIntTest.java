@@ -3,9 +3,13 @@ package com.olympp.backend.web.rest;
 import com.olympp.backend.BackendApp;
 
 import com.olympp.backend.domain.Recolte;
+import com.olympp.backend.domain.Plante;
+import com.olympp.backend.domain.Mois;
 import com.olympp.backend.repository.RecolteRepository;
 import com.olympp.backend.service.RecolteService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.RecolteCriteria;
+import com.olympp.backend.service.RecolteQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +52,9 @@ public class RecolteResourceIntTest {
     private RecolteService recolteService;
 
     @Autowired
+    private RecolteQueryService recolteQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -69,7 +76,7 @@ public class RecolteResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RecolteResource recolteResource = new RecolteResource(recolteService);
+        final RecolteResource recolteResource = new RecolteResource(recolteService, recolteQueryService);
         this.restRecolteMockMvc = MockMvcBuilders.standaloneSetup(recolteResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -155,6 +162,77 @@ public class RecolteResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(recolte.getId().intValue()));
     }
+
+    @Test
+    @Transactional
+    public void getAllRecoltesByPlanteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Plante plante = PlanteResourceIntTest.createEntity(em);
+        em.persist(plante);
+        em.flush();
+        recolte.setPlante(plante);
+        recolteRepository.saveAndFlush(recolte);
+        Long planteId = plante.getId();
+
+        // Get all the recolteList where plante equals to planteId
+        defaultRecolteShouldBeFound("planteId.equals=" + planteId);
+
+        // Get all the recolteList where plante equals to planteId + 1
+        defaultRecolteShouldNotBeFound("planteId.equals=" + (planteId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllRecoltesByMoisIsEqualToSomething() throws Exception {
+        // Initialize the database
+        Mois mois = MoisResourceIntTest.createEntity(em);
+        em.persist(mois);
+        em.flush();
+        recolte.setMois(mois);
+        recolteRepository.saveAndFlush(recolte);
+        Long moisId = mois.getId();
+
+        // Get all the recolteList where mois equals to moisId
+        defaultRecolteShouldBeFound("moisId.equals=" + moisId);
+
+        // Get all the recolteList where mois equals to moisId + 1
+        defaultRecolteShouldNotBeFound("moisId.equals=" + (moisId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultRecolteShouldBeFound(String filter) throws Exception {
+        restRecolteMockMvc.perform(get("/api/recoltes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(recolte.getId().intValue())));
+
+        // Check, that the count call also returns 1
+        restRecolteMockMvc.perform(get("/api/recoltes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultRecolteShouldNotBeFound(String filter) throws Exception {
+        restRecolteMockMvc.perform(get("/api/recoltes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restRecolteMockMvc.perform(get("/api/recoltes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional

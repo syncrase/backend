@@ -13,8 +13,7 @@ import java.util.Objects;
  * A Recolte.
  */
 @Entity
-@Table(name = "recolte",
-uniqueConstraints={@UniqueConstraint(columnNames={"plante_id", "mois_id"})})
+@Table(name = "recolte")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Recolte implements Serializable {
 
@@ -32,15 +31,14 @@ public class Recolte implements Serializable {
     @JsonIgnoreProperties("recoltes")
     private Mois mois;
 
-    public Recolte(Plante plante, Mois mois) {
+    public Recolte() {
+		super();
+	}
+
+	public Recolte(Plante plante, Mois mois) {
 		super();
 		this.plante = plante;
 		this.mois = mois;
-	}
-
-	public Recolte() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

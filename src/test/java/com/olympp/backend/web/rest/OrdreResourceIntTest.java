@@ -6,6 +6,8 @@ import com.olympp.backend.domain.Ordre;
 import com.olympp.backend.repository.OrdreRepository;
 import com.olympp.backend.service.OrdreService;
 import com.olympp.backend.web.rest.errors.ExceptionTranslator;
+import com.olympp.backend.service.dto.OrdreCriteria;
+import com.olympp.backend.service.OrdreQueryService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,9 @@ public class OrdreResourceIntTest {
     private OrdreService ordreService;
 
     @Autowired
+    private OrdreQueryService ordreQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +77,7 @@ public class OrdreResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrdreResource ordreResource = new OrdreResource(ordreService);
+        final OrdreResource ordreResource = new OrdreResource(ordreService, ordreQueryService);
         this.restOrdreMockMvc = MockMvcBuilders.standaloneSetup(ordreResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -162,6 +167,79 @@ public class OrdreResourceIntTest {
             .andExpect(jsonPath("$.id").value(ordre.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
+
+    @Test
+    @Transactional
+    public void getAllOrdresByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        ordreRepository.saveAndFlush(ordre);
+
+        // Get all the ordreList where name equals to DEFAULT_NAME
+        defaultOrdreShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the ordreList where name equals to UPDATED_NAME
+        defaultOrdreShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllOrdresByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        ordreRepository.saveAndFlush(ordre);
+
+        // Get all the ordreList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultOrdreShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the ordreList where name equals to UPDATED_NAME
+        defaultOrdreShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllOrdresByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        ordreRepository.saveAndFlush(ordre);
+
+        // Get all the ordreList where name is not null
+        defaultOrdreShouldBeFound("name.specified=true");
+
+        // Get all the ordreList where name is null
+        defaultOrdreShouldNotBeFound("name.specified=false");
+    }
+    /**
+     * Executes the search, and checks that the default entity is returned
+     */
+    private void defaultOrdreShouldBeFound(String filter) throws Exception {
+        restOrdreMockMvc.perform(get("/api/ordres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(ordre.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+
+        // Check, that the count call also returns 1
+        restOrdreMockMvc.perform(get("/api/ordres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned
+     */
+    private void defaultOrdreShouldNotBeFound(String filter) throws Exception {
+        restOrdreMockMvc.perform(get("/api/ordres?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restOrdreMockMvc.perform(get("/api/ordres/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
+    }
+
 
     @Test
     @Transactional
